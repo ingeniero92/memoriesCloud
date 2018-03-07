@@ -45,8 +45,6 @@ class Profile extends Component {
         if(this.state.uid){
             try{
                 this.state.name ? FirebaseHelpers.setUserName(this.state.uid, this.state.name) : null
-                this.state.bio ? FirebaseHelpers.setUserBio(this.state.uid, this.state.bio) : null
-                this.state.place ? FirebaseHelpers.setUserPlace(this.state.uid, this.state.place) : null
                 Keyboard.dismiss()
                 this.props.navigation.navigate('Home')
             } catch (error){
