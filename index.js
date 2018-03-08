@@ -1,4 +1,7 @@
 import { AppRegistry } from 'react-native';
-import App from './App';
 
-AppRegistry.registerComponent('memoriesCloud', () => App);
+import IndexApp from './src/';
+import NewMemory from './src/components/NewMemory'
+
+AppRegistry.registerComponent('memoriesCloud', () => IndexApp);
+AppRegistry.registerComponent('NewMemory', () => NewMemory);
