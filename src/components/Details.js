@@ -44,12 +44,6 @@ class Details extends Component {
         this.dropdown.alertWithType('success', 'Copiado al portapapeles:', text);
     }
 
-    onClose(data) {
-        // data = {type, title, message, action}
-        // action means how the alert was closed.
-        // returns: automatic, programmatic, tap, pan or cancel
-    }
-
     getData(){       
         return this.props.navigation.state.params.item
     }
@@ -112,7 +106,6 @@ class Details extends Component {
                 
                 <DropdownAlert 
                     ref={ref => this.dropdown = ref} 
-                    onClose={data => this.onClose(data)}
                     startDelta = {-200}
                 /> 
 

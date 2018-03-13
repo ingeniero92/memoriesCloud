@@ -41,9 +41,7 @@ class Login extends Component {
             this.setState({
                 response: 'User Log In'
             })            
-            setTimeout( () => {
-                this.props.navigation.navigate('Home')
-            }, 1500)
+            this.props.navigation.navigate('Home')
         } catch(error) {
             this.setState({
                 loading: false,
@@ -51,12 +49,6 @@ class Login extends Component {
             })
             this.dropdown.alertWithType('error', 'Error', error.message);
         }
-    }
-
-    onClose(data) {
-        // data = {type, title, message, action}
-        // action means how the alert was closed.
-        // returns: automatic, programmatic, tap, pan or cancel
     }
 
     render(){
@@ -122,7 +114,6 @@ class Login extends Component {
 
                 <DropdownAlert 
                     ref={ref => this.dropdown = ref} 
-                    onClose={data => this.onClose(data)}
                     startDelta = {-200}
                 />
 

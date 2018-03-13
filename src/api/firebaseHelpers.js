@@ -18,6 +18,18 @@ class FirebaseHelpers {
         return firebase.database().ref(userNamePath).set(place)
     }
 
+    static setMemory(userId, memory){
+        let userNamePath = "/user/" + userId + "/memories"
+        var ref = firebase.database().ref(userNamePath)
+        ref.push(memory)
+    }
+
+    static removeMemory(userId, memoryId){
+        let userNamePath = "/user/" + userId + "/memories/" + memoryId
+        var ref = firebase.database().ref(userNamePath)
+        ref.remove()
+    }
+
     // Getters
     static getName(userId, callback){
         let userNamePath = "/user/" + userId + "/details/name"
@@ -28,6 +40,17 @@ class FirebaseHelpers {
             }
             callback(name)
         })
+    }
+
+    static getMemories(userId){
+
+        let userMemoriesPath = "/user/" + userId + "/memories"
+        var ref = firebase.database().ref(userMemoriesPath)
+
+        return ref.once("value", (snapshot) => {
+            let memories = snapshot.val()
+        }).then(response => Promise.all([response.val()]))
+
     }
 
 }

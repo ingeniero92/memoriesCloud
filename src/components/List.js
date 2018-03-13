@@ -11,13 +11,19 @@ import{
     TextInput,
     Dimensions,
     Share,
-    Clipboard
+    Clipboard,
+    ActivityIndicator
 } from 'react-native'
 
 import Icon from 'react-native-vector-icons/FontAwesome'
 import DropdownAlert from 'react-native-dropdownalert'
+import * as firebase from 'firebase'
+import {getSortedMemoriesFromObject} from '../lib'
 
-import {getMemories} from '../api/api'
+import {connect} from 'react-redux'
+import {fetchData} from '../actions'
+
+import FirebaseHelpers from '../api/firebaseHelpers'
 
 const {width, height} = Dimensions.get('window')
 
@@ -27,7 +33,25 @@ class List extends Component {
     constructor(props){
         super(props)
         this.state = {
+            uid: '',
+            refreshing: false
         }
+        this.getUser()
+    }
+
+    async getUser(){
+        try {
+            firebase.auth().onAuthStateChanged((user) => {             
+                if(user){                                    
+                    this.props.fetchData(user.uid)
+                    this.setState({     
+                        uid: user.uid
+                    }) 
+                }                             
+            })        
+        } catch (error){
+            console.log(error)
+        }        
     }
 
     onShare(text){
@@ -54,15 +78,13 @@ class List extends Component {
         navigate('NewMemory', {source: 'clipboard'})
     }
 
-    // Necesario para el DropAlert
-    onClose(data) {
-        // data = {type, title, message, action}
-        // action means how the alert was closed.
-        // returns: automatic, programmatic, tap, pan or cancel
+    deleteMemory(memoryId){        
+        FirebaseHelpers.removeMemory(this.state.uid,memoryId)
+        this.props.fetchData(this.state.uid)
     }
 
     renderItem(item){   
-        const {navigate} = this.props.navigation         
+        const {navigate} = this.props.navigation    
         return (
             <View style={styles.memoryContainer}>
 
@@ -96,11 +118,11 @@ class List extends Component {
                     </TouchableWithoutFeedback>
                     
                     <TouchableWithoutFeedback                         
-                        onPress={() => navigate('Details', {item: item})}
+                        onPress={() => this.deleteMemory(item.key)}
                     >
                         <Icon 
-                            name="cog"
-                            color = "white"
+                            name="trash"
+                            color = "#d80404"
                             size = {20}
                             style={styles.memoryIcon}
                         />
@@ -110,10 +132,10 @@ class List extends Component {
         )
     }
 
-    render(){
+    render(){     
         return(
             <View style={styles.container}>
-
+            
                 <View style={styles.copyMemoryFromClipboardContainer}> 
                     <TouchableWithoutFeedback 
                         onPress={() => this.copyMemoryFromClipboard()}
@@ -132,21 +154,31 @@ class List extends Component {
 
                 <Text style={styles.titleText}>Mis Recuerdos:</Text>
 
-                <ScrollView style={styles.memoriesContainer}>            
-                    {/* FlatList se usa para datos locales*/}
-                    <FlatList             
-                        SeparatorComponent={() => <View style={{width: 5}} />}
-                        renderItem={({item}) => this.renderItem(item)}                
-                        data = {getMemories()}  
-                        keyExtractor={(item, index) => index.toString()}              
-                    />
-                </ScrollView>
+                {this.props.data.memories 
+                    ?
+                    <ScrollView style={styles.memoriesContainer}>                            
+                        <FlatList             
+                            SeparatorComponent={() => <View style={{width: 5}} />}
+                            renderItem={({item}) => this.renderItem(item)}                
+                            data = {getSortedMemoriesFromObject(this.props.data.memories)}
+                            extraData = {this.props.data.isFetching}  
+                            keyExtractor={(item, index) => index.toString()}  
+                        />
+                    </ScrollView>
+                    :
+                    <Text style={styles.textNoMemories}>Agregue facilmente un recuerdo mediante el portapapeles o la herramienta de compartir seleccionando cualquier texto en su dispositivo</Text>
+                }
 
                 <DropdownAlert 
                     ref={ref => this.dropdown = ref} 
-                    onClose={data => this.onClose(data)}
                     startDelta = {-200}
                 /> 
+
+                {this.props.data.isFetching &&
+                    <View style={styles.loading}>
+                        <ActivityIndicator style={styles.activityIndicator} size="large" color="white" />   
+                    </View>
+                }   
 
             </View>            
         )
@@ -218,7 +250,37 @@ const styles = StyleSheet.create({
       borderColor: 'rgba(255, 255, 255, .5)',
       borderBottomWidth: 3,
       paddingVertical: 10
+    },
+    textNoMemories: {
+        textAlign: 'center',
+        color: 'white',
+        marginBottom: 10,
+        fontSize: 14,
+        paddingVertical: 10
+    },
+    loading: {
+        position: 'absolute',
+        left: 0,
+        right: 0,
+        top: 0,
+        bottom: 0,
+        opacity: 0.5,
+        backgroundColor: 'black',
+        justifyContent: 'center',
+        alignItems: 'center'
     }
   });
   
-export default List  
+//mapStateToProps
+const mapStateToProps = state => {
+    return {data: state.data}
+}
+
+//mapDispatchToProps
+const mapDispatchToProps = dispatch => {
+    return {
+        fetchData: (user) => dispatch(fetchData(user))
+    }
+}
+
+export default connect(mapStateToProps,mapDispatchToProps)(List)

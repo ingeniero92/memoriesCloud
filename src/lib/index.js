@@ -1,3 +1,5 @@
+import React from 'react'
+
 import _ from 'lodash'
 
 export const replaceHttps = url => {
@@ -51,4 +53,38 @@ export const getCurrentDate = () => {
 export const getCurrentMilliseconds = () => {
     var milliseconds = new Date().getUTCMilliseconds().toString();
     return milliseconds
+}
+
+function compareMemories(a,b){
+
+    const dateA = Number(a.date)
+    const dateB = Number(b.date)
+
+    let comparison = 0
+
+    if (dateA > dateB) {
+        comparison = 1
+    } else if (dateA < dateB) {
+        comparison = -1
+    }
+    return comparison * -1
+}
+
+export const getArrayFromObject = (object) => {
+    const objectArray = Object.keys(object).map(key => 
+        item = {key: key, date: object[key].date, text: object[key].text}
+    )
+    return objectArray
+}
+
+export const getSortedMemoriesFromObject = (object) => {  
+    
+    if(object){
+        var memoriesObject = getArrayFromObject(object)
+        var sortedMemories = memoriesObject.sort(compareMemories)
+        return memoriesObject
+    } else {
+        return object
+    }   
+    
 }

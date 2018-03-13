@@ -13,6 +13,7 @@ import {
 import * as firebase from 'firebase'
 import ShareExtension from 'react-native-share-extension'
 
+import FirebaseHelpers from '../api/firebaseHelpers'
 import {getCurrentDate} from '../lib' 
 
 const {width, height} = Dimensions.get('window')
@@ -21,6 +22,25 @@ class NewMemory extends Component {
 
     constructor(props){        
         super(props)
+        this.state = {
+            source: '',
+            value: '',
+            uid: ''
+        }    
+    }
+
+    componentWillUnmount() {
+        if (this.unsubscriber) {
+          this.unsubscriber();
+        }
+      }
+    
+
+    componentDidMount() {
+
+        this.unsubscriber = firebase.auth().onAuthStateChanged((user) => {
+          this.setState({ uid: user.uid })
+        })
 
         var source
         try{
@@ -29,12 +49,7 @@ class NewMemory extends Component {
             source = 'share'
         }
 
-        this.state = {
-            source,
-            value: ''
-        }    
-        
-        if(this.state.source == 'clipboard'){
+        if(source == 'clipboard'){
             this.copyMemoryFromClipboard();
         } else {
             this.getShareData()
@@ -44,12 +59,10 @@ class NewMemory extends Component {
 
     async copyMemoryFromClipboard(){
         var value = await Clipboard.getString() 
-        this.setState({ value })
-    }
-
-    cancelCopy(){
-        const {goBack} = this.props.navigation
-        goBack()
+        this.setState({ 
+            value, 
+            source: 'clipboard' 
+        })
     }
 
     async getShareData() {
@@ -60,6 +73,7 @@ class NewMemory extends Component {
             try {
                 const { type, value } = await ShareExtension.data()
                 this.setState({
+                    source: 'share',
                     type,
                     value
                 })            
@@ -71,10 +85,6 @@ class NewMemory extends Component {
         }       
     }
 
-    cancelShare(){
-        ShareExtension.close()
-    }
-
     cancel(){
         if(this.state.source == 'clipboard'){
             this.cancelCopy()
@@ -83,8 +93,31 @@ class NewMemory extends Component {
         }
     }
 
-    saveNewMemory(){
-        var date = getCurrentDate()
+    cancelCopy(){        
+        const {goBack} = this.props.navigation
+        goBack()
+    }
+
+    cancelShare(){
+        ShareExtension.close()
+    }
+
+    save(){
+        if(this.state.uid){
+            try{
+
+                let memory = {
+                    "text": this.state.value,
+                    "date": getCurrentDate()
+                }
+
+                this.state.value ? FirebaseHelpers.setMemory(this.state.uid, memory) : null
+                this.props.navigation.navigate('Home')
+
+            } catch (error){
+                console.log(error)
+            }
+        }       
     }
 
     render(){     
@@ -100,7 +133,7 @@ class NewMemory extends Component {
                 </View>
 
                 <TouchableHighlight
-                    onPress={() => this.cancel()}
+                    onPress={() => this.save()}
                     style={styles.saveButton}
                     underlayColor = '#fec600'
                 >                                       
