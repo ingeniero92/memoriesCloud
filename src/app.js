@@ -3,11 +3,12 @@ import {
     Platform,
     StyleSheet,
     Text,
-    View
+    View,
+    BackHandler
 } from 'react-native';
 
 import SlideMenu from 'react-native-side-menu'
-import DropdownAlert from 'react-native-dropdownalert'
+import {connect} from 'react-redux'
 
 import Header from './components/Header'
 import Menu from './components/Menu'
@@ -32,6 +33,30 @@ class App extends Component{
         this.setState({isOpen})
     }
 
+    componentWillMount() {
+        BackHandler.addEventListener('hardwareBackPress', this.backPressed)
+    }
+     
+    componentWillUnmount() {
+        BackHandler.removeEventListener('hardwareBackPress', this.backPressed)
+    }
+     
+    backPressed = () => {        
+    
+        const { nav } = this.props
+        const { routes, index } = nav
+        const currentRoute = routes[index];
+
+        if(currentRoute.routeName != "Home"){
+            this.props.navigation.pop()
+        } else {
+            BackHandler.exitApp()
+        }
+
+        return true
+    
+    }
+
     render(){
         return (           
             <View style={[{flex:1}, styles.container]}>
@@ -50,10 +75,15 @@ class App extends Component{
     }
 }
 
-export default App
-
 const styles = StyleSheet.create({
     container: {
         backgroundColor: '#0088ff',
     }
 });
+
+//mapStateToProps
+const mapStateToProps = state => {
+    return {data: state.data, nav: state.nav}
+}
+
+export default connect(mapStateToProps)(App)

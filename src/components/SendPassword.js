@@ -6,10 +6,12 @@ import {
     TextInput,
     TouchableHighlight,
     Keyboard,
-    Image
+    Image,
+    ActivityIndicator
 } from 'react-native'
 
 import * as firebase from 'firebase'
+import DropdownAlert from 'react-native-dropdownalert'
 
 class SendPassword extends Component {
 
@@ -17,21 +19,29 @@ class SendPassword extends Component {
         super(props)
         this.state = {
             email: '',
-            password: ''
+            password: '',
+            loading: false
         }
         this.sendPassword = this.sendPassword.bind(this)
     }    
 
     sendPassword(){
+
+        this.setState({
+            loading: true            
+        })
+
         const {goBack} = this.props.navigation
         firebase.auth().sendPasswordResetEmail(this.state.email)
-            .then(function() {
-                console.log("Email sent")
+            .then(() => {
+                goBack()
             })
-            .catch(function(error) {
-                console.log("Error")
-            })
-        goBack()
+            .catch((error) =>{
+                this.setState({
+                    loading: false            
+                })
+                this.dropdown.alertWithType('error', 'Error', error.message)
+            })     
     }
 
     render(){
@@ -75,7 +85,18 @@ class SendPassword extends Component {
                     >                                       
                         <Text style={styles.textBackButton}>Volver</Text>
                     </TouchableHighlight>   
-                </View>                                
+                </View> 
+
+                <DropdownAlert 
+                    ref={ref => this.dropdown = ref} 
+                    startDelta = {-200}
+                />       
+
+                {this.state.loading &&
+                    <View style={styles.loading}>
+                        <ActivityIndicator style={styles.activityIndicator} size="large" color="white" />   
+                    </View>
+                }                           
 
             </View>
         )
@@ -132,6 +153,17 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         color: 'white',
         fontWeight: 'bold'
+    },
+    loading: {
+        position: 'absolute',
+        left: 0,
+        right: 0,
+        top: 0,
+        bottom: 0,
+        opacity: 0.5,
+        backgroundColor: 'black',
+        justifyContent: 'center',
+        alignItems: 'center'
     }
 })
 
