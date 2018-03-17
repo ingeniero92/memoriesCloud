@@ -43,7 +43,7 @@ class Header extends Component {
                     </Animatable.View>
                 </TouchableWithoutFeedback>
 
-                <Image style={styles.logo} source={require('../images/logo.jpg')}/>
+                <Image style={styles.logo} source={require('../images/logo.png')}/>
 
                 <TouchableWithoutFeedback>
                 <Icon 

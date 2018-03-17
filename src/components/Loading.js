@@ -51,7 +51,7 @@ class Loading extends Component {
     render(){        
         return (
             <View style={styles.container}>                
-                <Image style={styles.logo} source={require('../images/logo.jpg')}/>                
+                <Image style={styles.logo} source={require('../images/logo.png')}/>                
                 <ActivityIndicator size="large" color="#fec600" />   
                 <Text style={styles.textLoading}>{this.state.textLoading}</Text>        
             </View>

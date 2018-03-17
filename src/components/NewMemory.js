@@ -175,7 +175,7 @@ class NewMemory extends Component {
                 <View style={styles.container}>
                     
                     <View style={styles.logoContainer}>
-                        <Image style={styles.logo} source={require('../images/logo.jpg')}/>
+                        <Image style={styles.logo} source={require('../images/logo.png')}/>
                         <Text style={styles.text}>You need a loged account in Memories Cloud to save your data, login or register now free!</Text>
                     </View>    
 

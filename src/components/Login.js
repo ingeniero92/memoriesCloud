@@ -94,7 +94,7 @@ class Login extends Component {
             <View style={styles.container}>
                 
                 <View style={styles.logoContainer}>
-                    <Image style={styles.logo} source={require('../images/logo.jpg')}/>
+                    <Image style={styles.logo} source={require('../images/logo.png')}/>
                     <Text style={styles.text}>Login with Memories Cloud!</Text>
                 </View>                
 

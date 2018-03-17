@@ -142,7 +142,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         flexDirection: 'row',
         alignItems: 'center',
-        width: width / 2 + 60,
+        width: (width/3)*2,
         borderColor: 'rgba(255, 255, 255, .5)',
         borderBottomWidth: 3,
         paddingHorizontal: 20,
@@ -173,7 +173,7 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     scrollContainer: {
-        width: width / 2 + 59
+        width: (width/3)*2
     },
     rightIcon: {
         paddingRight: 20
