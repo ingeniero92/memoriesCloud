@@ -50,7 +50,13 @@ class App extends Component{
         if(currentRoute.routeName != "Home"){
             this.props.navigation.pop()
         } else {
-            BackHandler.exitApp()
+            if(this.state.isOpen){
+                this.setState({
+                    isOpen: false
+                })
+            } else {
+                BackHandler.exitApp()
+            }            
         }
 
         return true
@@ -61,6 +67,7 @@ class App extends Component{
         return (           
             <View style={[{flex:1}, styles.container]}>
                 <SlideMenu
+                    disableGestures = {true}
                     menu = {<Menu navigation={this.props.navigation} />}
                     isOpen = {this.state.isOpen}
                     onChange = { (isOpen) => this.updateMenu(isOpen)}              

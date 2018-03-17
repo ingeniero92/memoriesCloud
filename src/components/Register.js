@@ -11,6 +11,7 @@ import {
 } from 'react-native'
 
 import * as firebase from 'firebase'
+import DropdownAlert from 'react-native-dropdownalert'
 
 class Register extends Component {
 
@@ -19,34 +20,48 @@ class Register extends Component {
         this.state = {
             email: '',
             password: '',
-            loading: false
+            confirmPassword: '',
+            loading: false,
+            response: ''
         }
         this.signUp = this.signUp.bind(this)
     }
 
     signUp(){
-        this.setState({
-            loading: true
-        })
+
         Keyboard.dismiss()
-        this.registerUser()
+
+        if(this.state.password != this.state.confirmPassword){
+            this.dropdown.alertWithType('error', 'Error', 'Passwords must be equal!');
+        } else {
+            this.setState({
+                loading: true
+            })
+            
+            this.registerUser()
+        }
+
     }
 
     async registerUser(){        
         const {navigate} = this.props.navigation
+
         try {
             await firebase.auth().createUserWithEmailAndPassword(this.state.email, this.state.password)
             this.setState({
                 response: 'Account Created'
             })
             setTimeout( () => {                
-                navigate('Home')
+                navigate('Home', {newUser: true})
             }, 1500)
-        } catch(error){
+        } catch(error){            
             this.setState({
+                loading: false,
                 response: error.toString()
             })
+            this.dropdown.alertWithType('error', 'Error', error.message);
         }
+        
     }
 
     render(){
@@ -59,7 +74,7 @@ class Register extends Component {
                 
                 <View style={styles.logoContainer}>
                     <Image style={styles.logo} source={require('../images/logo.jpg')}/>
-                    <Text style={styles.text}>¡ Introduce tus datos para registrarte gratuitamente !</Text>
+                    <Text style={styles.text}>Fill your data to register free!</Text>
                 </View>                
 
                 <View style={styles.inputsContainer}>
@@ -77,11 +92,22 @@ class Register extends Component {
                         selectionColor="#449DEF"
                         underlineColorAndroid='transparent'
                         placeholderTextColor="grey"
-                        placeholder = "Contraseña"
+                        placeholder = "Password"
                         password = {true}
                         visible-password = {true}                        
                         secureTextEntry={true}
                         onChangeText = {(password) => this.setState({password})}
+                    />
+                    <TextInput
+                        style = {styles.inputText}
+                        selectionColor="#449DEF"
+                        underlineColorAndroid='transparent'
+                        placeholderTextColor="grey"
+                        placeholder = "Confirm Password"
+                        password = {true}
+                        visible-password = {true}                        
+                        secureTextEntry={true}
+                        onChangeText = {(confirmPassword) => this.setState({confirmPassword})}
                     />
                 </View>  
 
@@ -91,7 +117,7 @@ class Register extends Component {
                         style={styles.registerButton}
                         underlayColor = '#fec600'
                     > 
-                        <Text style={styles.textRegisterButton}>¡ Registrarse gratuitamente !</Text>
+                        <Text style={styles.textRegisterButton}>Register account!</Text>
                     </TouchableHighlight>
 
                     <TouchableHighlight
@@ -99,9 +125,14 @@ class Register extends Component {
                         style={styles.backButton}
                         underlayColor = 'red'
                     >                                       
-                        <Text style={styles.textBackButton}>Volver</Text>
+                        <Text style={styles.textBackButton}>Back to Login</Text>
                     </TouchableHighlight>   
                 </View>   
+
+                <DropdownAlert 
+                    ref={ref => this.dropdown = ref} 
+                    startDelta = {-200}
+                />
 
                 {this.state.loading &&
                     <View style={styles.loading}>

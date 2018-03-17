@@ -3,7 +3,6 @@ import Login from '../components/Login'
 import Register from '../components/Register'
 import Loading from '../components/Loading'
 import Profile from '../components/Profile'
-import Details from '../components/Details'
 import NewMemory from '../components/NewMemory'
 import SendPassword from '../components/SendPassword'
 
@@ -34,12 +33,6 @@ const Routes = {
     },
 	Profile: {
 		screen: Profile,
-		navigationOptions: ({navigation}) => ({
-			header: false
-		})
-    },
-    Details: {
-		screen: Details,
 		navigationOptions: ({navigation}) => ({
 			header: false
 		})

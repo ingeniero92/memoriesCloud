@@ -22,7 +22,6 @@ class SendPassword extends Component {
             password: '',
             loading: false
         }
-        this.sendPassword = this.sendPassword.bind(this)
     }    
 
     sendPassword(){
@@ -31,10 +30,10 @@ class SendPassword extends Component {
             loading: true            
         })
 
-        const {goBack} = this.props.navigation
+        const {navigate} = this.props.navigation
         firebase.auth().sendPasswordResetEmail(this.state.email)
             .then(() => {
-                goBack()
+                navigate("Login", {sendPassword: true})
             })
             .catch((error) =>{
                 this.setState({
@@ -54,7 +53,7 @@ class SendPassword extends Component {
                 
                 <View style={styles.logoContainer}>
                     <Image style={styles.logo} source={require('../images/logo.jpg')}/>
-                    <Text style={styles.text}>¡ Introduce tu email para enviarte el reseteo de contraseña !</Text>
+                    <Text style={styles.text}>Fill with your email to reset password!</Text>
                 </View>                
 
                 <View style={styles.inputsContainer}>
@@ -71,11 +70,11 @@ class SendPassword extends Component {
 
                 <View style={styles.buttonContainer}>
                     <TouchableHighlight
-                        onPress = {this.sendPassword}
+                        onPress = { () => this.sendPassword()}
                         style={styles.sendPasswordButton}
                         underlayColor = '#fec600'
                     > 
-                        <Text style={styles.textSendButton}>Enviar reseteo de contraseña</Text>
+                        <Text style={styles.textSendButton}>Send reset password</Text>
                     </TouchableHighlight>
 
                     <TouchableHighlight
@@ -83,7 +82,7 @@ class SendPassword extends Component {
                         style={styles.backButton}
                         underlayColor = 'red'
                     >                                       
-                        <Text style={styles.textBackButton}>Volver</Text>
+                        <Text style={styles.textBackButton}>Back</Text>
                     </TouchableHighlight>   
                 </View> 
 

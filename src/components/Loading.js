@@ -13,7 +13,7 @@ import * as firebase from 'firebase'
 
 import Firebase from '../api/firebase'
 
-class Profile extends Component {
+class Loading extends Component {
 
     constructor(props){
         super(props)
@@ -21,7 +21,7 @@ class Profile extends Component {
         this.state = {
             initialView : null,
             userLoaded: false,
-            textLoading: 'Cargando Memories Cloud...'
+            textLoading: 'Loading Memories Cloud...'
         }
         this.getInitialView()
     }
@@ -33,13 +33,13 @@ class Profile extends Component {
                 this.setState({                   
                     initialView: 'Home',
                     userLoaded: true,
-                    textLoading: 'Cargando usuario...'
+                    textLoading: 'Loading user...'
                 })
             } else {
                 this.setState({                    
                     initialView: 'Login',     
                     userLoaded: false,               
-                    textLoading: 'Cargando Registro...'
+                    textLoading: 'Loading register...'
                 })
             }      
             setTimeout( () => {
@@ -81,4 +81,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default Profile
+export default Loading

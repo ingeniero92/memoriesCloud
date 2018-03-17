@@ -9,6 +9,7 @@ import {
 } from 'react-native'
 
 import * as firebase from 'firebase'
+import DropdownAlert from 'react-native-dropdownalert'
 
 import FirebaseHelpers from '../api/firebaseHelpers'
 
@@ -46,9 +47,9 @@ class Profile extends Component {
             try{
                 this.state.name ? FirebaseHelpers.setUserName(this.state.uid, this.state.name) : null
                 Keyboard.dismiss()
-                this.props.navigation.navigate('Home')
+                this.dropdown.alertWithType('success', 'Sucess', 'User profile changed!')
             } catch (error){
-                console.log(error)
+                this.dropdown.alertWithType('error', 'Error', error.message)
             }
         }       
     }
@@ -58,7 +59,7 @@ class Profile extends Component {
         return (
             <View style={styles.container}>
 
-                <Text style={styles.titleText}>Datos del Usuario</Text>
+                <Text style={styles.titleText}>User Settings</Text>
 
                 <View>      
                     <TextInput
@@ -77,7 +78,7 @@ class Profile extends Component {
                     onPress = {this.saveForm.bind(this)}
                     underlayColor = '#fec600'
                 > 
-                    <Text style={styles.textSaveButton}>Enviar</Text>
+                    <Text style={styles.textSaveButton}>Save</Text>
                 </TouchableHighlight>
 
                 <TouchableHighlight
@@ -85,8 +86,13 @@ class Profile extends Component {
                     style={styles.cancelButton}
                     underlayColor = 'red'
                 >                                       
-                    <Text style={styles.textCancelButton}>Descartar cambios</Text>
+                    <Text style={styles.textCancelButton}>Back to Home</Text>
                 </TouchableHighlight> 
+
+                <DropdownAlert 
+                    ref={ref => this.dropdown = ref} 
+                    startDelta = {-200}
+                /> 
 
             </View>
         )

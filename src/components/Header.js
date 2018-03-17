@@ -8,34 +8,55 @@ import {
 } from 'react-native'
 
 import Icon from 'react-native-vector-icons/FontAwesome'
+import * as Animatable from 'react-native-animatable'
 
 {/* Componente de funcion, en lugar de clase, ya que no tiene estado, solo muestra datos */}
 {/* Si en vez de {} pusieramos () */}
 {/* Props puede ir con parentesis. O ({navigation}) para poder usarlo como parametro */}
 
-const Header = props => {
+class Header extends Component {
 
-    const {navigate} = props.navigation
+    constructor(props){
+        super(props)
+        this.state = {
+        }
+    }
 
-    return(
-        <View style = {styles.container}>
-            <TouchableWithoutFeedback onPress = { () => props.toggle()}>
-                <Icon
-                    name = "bars"
-                    color = "white"
-                    size = {25}
+    handleViewRef = ref => this.view = ref;
+
+    toggleMenu(){        
+        this.view.bounceIn(2000)
+        this.props.toggle()
+    }
+
+    render(){
+        return(
+            <View style = {styles.container}>
+            
+                <TouchableWithoutFeedback onPress = { () => this.toggleMenu()}>
+                    <Animatable.View ref={this.handleViewRef}>
+                        <Icon
+                            name = "bars"
+                            color = "white"
+                            size = {25}
+                        />
+                    </Animatable.View>
+                </TouchableWithoutFeedback>
+
+                <Image style={styles.logo} source={require('../images/logo.jpg')}/>
+
+                <TouchableWithoutFeedback>
+                <Icon 
+                    name="search"
+                    color="transparent"
+                    size={25}
                 />
-            </TouchableWithoutFeedback>
-            <Image style={styles.logo} source={require('../images/logo.jpg')}/>
-            <TouchableWithoutFeedback>
-            <Icon 
-                name="search"
-                color="transparent"
-                size={25}
-            />
-            </TouchableWithoutFeedback>
-        </View>
-    )
+                </TouchableWithoutFeedback>
+
+            </View>
+        )
+    }
+   
 }
 
 const styles = StyleSheet.create({

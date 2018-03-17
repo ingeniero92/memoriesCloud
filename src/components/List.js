@@ -12,17 +12,18 @@ import{
     Dimensions,
     Share,
     Clipboard,
-    ActivityIndicator
+    ActivityIndicator,
+    AppState
 } from 'react-native'
 
 import Icon from 'react-native-vector-icons/FontAwesome'
 import DropdownAlert from 'react-native-dropdownalert'
 import * as firebase from 'firebase'
-import {getSortedMemoriesFromObject} from '../lib'
-
+import * as Animatable from 'react-native-animatable'
 import {connect} from 'react-redux'
-import {fetchData} from '../actions'
 
+import {fetchData} from '../actions'
+import {getSortedMemoriesFromObject} from '../lib'
 import FirebaseHelpers from '../api/firebaseHelpers'
 
 const {width, height} = Dimensions.get('window')
@@ -34,9 +35,29 @@ class List extends Component {
         super(props)
         this.state = {
             uid: '',
-            refreshing: false
+            refreshing: false,
+            appState: ''
         }
         this.getUser()
+    }
+
+    componentDidMount() {
+        AppState.addEventListener('change', this._handleAppStateChange);
+    }
+    
+    componentWillUnmount() {
+        AppState.removeEventListener('change', this._handleAppStateChange);
+    }
+    
+    _handleAppStateChange = (nextAppState) => {
+        if (this.state.appState.match(/inactive|background/) && nextAppState === 'active') {
+            try {
+                this.props.fetchData(this.state.uid)
+            } catch(error){
+                console.log(error)
+            }            
+        }
+        this.setState({appState: nextAppState});
     }
 
     async getUser(){
@@ -54,13 +75,13 @@ class List extends Component {
         }        
     }
 
-    onShare(text){
+    onShare(text){      
         Share.share({
             title: 'Memories Cloud',
-            message: '¡Mira este enlace que te envio con Memories Cloud! ' + text
+            message: text
         }, {
             //android
-            dialogTitle: 'Comparte este recuerdo con:',
+            dialogTitle: 'Share this memory with:',
             //ios
             excludeActivityTypes: [
                 'com.apple.UIKit.activity.PostToTwitter'
@@ -70,7 +91,7 @@ class List extends Component {
 
     copyToClipboard(text) {
         Clipboard.setString(text);
-        this.dropdown.alertWithType('success', 'Copiado al portapapeles:', text);
+        this.dropdown.alertWithType('success', 'Text copied to clipboard:', text)
     }
 
     copyMemoryFromClipboard(){
@@ -78,10 +99,11 @@ class List extends Component {
         navigate('NewMemory', {source: 'clipboard'})
     }
 
-    deleteMemory(memoryId){        
-        FirebaseHelpers.removeMemory(this.state.uid,memoryId)
+    deleteMemory(memoryId){      
+        FirebaseHelpers.removeMemory(this.state.uid,memoryId)        
         this.props.fetchData(this.state.uid)
-    }
+        this.dropdown.alertWithType('success', 'Success!', 'Memory Deleted!')   
+    }   
 
     renderItem(item){   
         const {navigate} = this.props.navigation    
@@ -141,7 +163,7 @@ class List extends Component {
                         onPress={() => this.copyMemoryFromClipboard()}
                     >
                         <View style={styles.copyMemoryFromClipboard}>
-                            <TextInput editable = {false} style={styles.copyMemoryFromClipboardText}>Obtener recuerdo de portapapeles</TextInput>
+                            <TextInput editable = {false} style={styles.copyMemoryFromClipboardText}>Get memory from clipboard</TextInput>
                             <Icon 
                                 name="clipboard"
                                 color = "#0088ff"
@@ -152,7 +174,7 @@ class List extends Component {
                     </TouchableWithoutFeedback>
                 </View>
 
-                <Text style={styles.titleText}>Mis Recuerdos:</Text>
+                <Text style={styles.titleText}>My saved Memories:</Text>
 
                 {this.props.data.memories 
                     ?
@@ -166,7 +188,7 @@ class List extends Component {
                         />
                     </ScrollView>
                     :
-                    <Text style={styles.textNoMemories}>Agregue facilmente un recuerdo mediante el portapapeles o la herramienta de compartir seleccionando cualquier texto en su dispositivo</Text>
+                    <Text style={styles.textNoMemories}>You can add a memory easily with the clipboard, or the "Share Tool", selecting any text in your device and pressing Share with Memories Cloud!</Text>
                 }
 
                 <DropdownAlert 

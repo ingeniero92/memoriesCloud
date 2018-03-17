@@ -77,7 +77,7 @@ class Menu extends Component {
                             onPress={() => navigate('Profile')}
                         >                    
                             <View>
-                                <Text style = {styles.settingsText}>   Ajustes</Text>
+                                <Text style = {styles.settingsText}>   User Settings</Text>
                             </View>                
                                                                     
                         </TouchableWithoutFeedback>
@@ -103,7 +103,7 @@ class Menu extends Component {
                                 color="white"
                                 size={28}
                             />
-                            <Text style={styles.text}>Consejos</Text>
+                            <Text style={styles.text}>Help</Text>
                         </View>
                         <Icon 
                             style={styles.rightIcon}
@@ -120,7 +120,7 @@ class Menu extends Component {
                                 color="white"
                                 size={28}
                             />
-                            <Text style={styles.text}>Soporte</Text>
+                            <Text style={styles.text}>Support</Text>
                         </View>
                         <Icon 
                             style={styles.rightIcon}

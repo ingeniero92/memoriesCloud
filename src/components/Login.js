@@ -8,15 +8,17 @@ import {
     Keyboard,
     Image,
     TouchableWithoutFeedback,
-    ActivityIndicator
+    ActivityIndicator,
+    BackHandler
 } from 'react-native'
 
+import {connect} from 'react-redux'
 import * as firebase from 'firebase'
 import DropdownAlert from 'react-native-dropdownalert'
 
 class Login extends Component {
 
-    constructor(props){
+    constructor(props){        
         super(props)
         this.state = {
             email: '',
@@ -24,6 +26,17 @@ class Login extends Component {
             response: '',
             loading: false
         }
+        
+    }
+
+    componentDidMount(){
+        try{
+            if(this.props.navigation.state.params.sendPassword){
+                this.dropdown.alertWithType('success', 'Reset Password Sent!', "Reset Password Sent! Verify your mail to change the password."); 
+            }            
+        } catch(error) {
+           
+        }        
     }
 
     login(){
@@ -51,6 +64,30 @@ class Login extends Component {
         }
     }
 
+    componentWillMount() {
+        BackHandler.addEventListener('hardwareBackPress', this.backPressed)
+    }
+     
+    componentWillUnmount() {
+        BackHandler.removeEventListener('hardwareBackPress', this.backPressed)
+    }
+     
+    backPressed = () => {        
+    
+        const { nav } = this.props
+        const { routes, index } = nav
+        const currentRoute = routes[index];
+
+        if(currentRoute.routeName != "Login"){
+            this.props.navigation.pop()
+        } else {
+            BackHandler.exitApp()
+        }
+
+        return true
+    
+    }
+
     render(){
         const {navigate} = this.props.navigation
         return (
@@ -58,7 +95,7 @@ class Login extends Component {
                 
                 <View style={styles.logoContainer}>
                     <Image style={styles.logo} source={require('../images/logo.jpg')}/>
-                    <Text style={styles.text}>Introduce tus datos para iniciar sesión:</Text>
+                    <Text style={styles.text}>Login with Memories Cloud!</Text>
                 </View>                
 
                 <View style={styles.inputsContainer}>
@@ -76,7 +113,7 @@ class Login extends Component {
                         selectionColor="#449DEF"
                         underlineColorAndroid='transparent'
                         placeholderTextColor="grey"
-                        placeholder = "Contraseña"
+                        placeholder = "Password"
                         password = {true}
                         visible-password = {true}                        
                         secureTextEntry={true}
@@ -89,7 +126,7 @@ class Login extends Component {
                         onPress={() => navigate('SendPassword')}
                     >
                         <View>
-                            <Text style={styles.sendPasswordText}>¿Has olvidado tu contraseña?</Text>
+                            <Text style={styles.sendPasswordText}>Forgotten Password?</Text>
                         </View>
                     </TouchableWithoutFeedback>                    
                 </View>  
@@ -100,7 +137,7 @@ class Login extends Component {
                         style={styles.loginButton}
                         underlayColor = '#fec600'
                     > 
-                        <Text style={styles.textLoginButton}>Entrar</Text>
+                        <Text style={styles.textLoginButton}>Login</Text>
                     </TouchableHighlight>
 
                     <TouchableHighlight
@@ -108,7 +145,7 @@ class Login extends Component {
                         style={styles.registerButton}
                         underlayColor = '#32A54A'
                     >                                       
-                        <Text style={styles.textRegisterButton}>¡ Crea tu cuenta gratuita !</Text>
+                        <Text style={styles.textRegisterButton}>Register free!</Text>
                     </TouchableHighlight>   
                 </View>      
 
@@ -200,4 +237,9 @@ const styles = StyleSheet.create({
     }
 })
 
-export default Login
+//mapStateToProps
+const mapStateToProps = state => {
+    return {nav: state.nav}
+}
+
+export default connect(mapStateToProps)(Login)
