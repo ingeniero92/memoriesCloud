@@ -42,7 +42,9 @@ class NewMemory extends Component {
 
         try{
             this.unsubscriber = firebase.auth().onAuthStateChanged((user) => {
-                this.setState({ uid: user.uid })
+                if(user){
+                    this.setState({ uid: user.uid })
+                }                
             })
         } catch(error){
             console.log(error)
