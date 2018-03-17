@@ -23,8 +23,7 @@ class Menu extends Component {
         super(props)
         this.state = {
             name: '',
-            uid: '',
-            loading: false
+            uid: ''
         }
         this.getUser()
     }
@@ -47,9 +46,7 @@ class Menu extends Component {
     }
 
     async logout(){
-        this.setState({
-            loading: true
-        })
+        this.props.setLoading(true)
         try {
             await firebase.auth().signOut()
         } catch(error){
@@ -131,12 +128,6 @@ class Menu extends Component {
                     </View>
                 </ScrollView>
 
-            {this.state.loading &&
-                <View style={styles.loading}>
-                    <ActivityIndicator style={styles.activityIndicator} size="large" color="white" />   
-                </View>
-            }  
-
             </View>
         )
     }
@@ -190,20 +181,6 @@ const styles = StyleSheet.create({
     iconWithText: {
         marginRight: 10,
         paddingLeft: 20
-    },
-    loading: {
-        position: 'absolute',
-        left: 0,
-        right: 0,
-        top: 0,
-        bottom: 0,
-        opacity: 0.5,
-        backgroundColor: 'black',
-        justifyContent: 'center',
-        alignItems: 'center'
-    },
-    activityIndicator:{
-        marginLeft: width/2 - 60
     }
 })
 

@@ -4,7 +4,8 @@ import {
     StyleSheet,
     Text,
     View,
-    BackHandler
+    BackHandler,
+    ActivityIndicator
 } from 'react-native';
 
 import SlideMenu from 'react-native-side-menu'
@@ -19,7 +20,8 @@ class App extends Component{
     constructor(props){
         super(props)
             this.state = {
-            isOpen: false
+            isOpen: false,
+            loading: false
         }
     }
 
@@ -31,6 +33,12 @@ class App extends Component{
 
     updateMenu(isOpen){
         this.setState({isOpen})
+    }
+
+    setLoading(loading){
+        this.setState({
+            loading
+        })
     }
 
     componentWillMount() {
@@ -68,15 +76,22 @@ class App extends Component{
             <View style={[{flex:1}, styles.container]}>
                 <SlideMenu
                     disableGestures = {true}
-                    menu = {<Menu navigation={this.props.navigation} />}
+                    menu = {<Menu navigation={this.props.navigation} setLoading = {this.setLoading.bind(this)} />}
                     isOpen = {this.state.isOpen}
-                    onChange = { (isOpen) => this.updateMenu(isOpen)}              
+                    onChange = { (isOpen) => this.updateMenu(isOpen)}     
                 >
                     <View style={[{flex: 1}, styles.container]}>
                         <Header navigation = {this.props.navigation} toggle = {this.toggle.bind(this)} />
                         <List navigation = {this.props.navigation} />
                     </View>                
-                </SlideMenu>                              
+                </SlideMenu>    
+
+                {this.state.loading &&
+                    <View style={styles.loading}>
+                        <ActivityIndicator style={styles.activityIndicator} size="large" color="white" />   
+                    </View>
+                }   
+
             </View>          
         )
     }
@@ -85,6 +100,17 @@ class App extends Component{
 const styles = StyleSheet.create({
     container: {
         backgroundColor: '#0088ff',
+    },
+    loading: {
+        position: 'absolute',
+        left: 0,
+        right: 0,
+        top: 0,
+        bottom: 0,
+        opacity: 0.5,
+        backgroundColor: 'black',
+        justifyContent: 'center',
+        alignItems: 'center'
     }
 });
 
