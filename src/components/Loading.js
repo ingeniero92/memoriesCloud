@@ -5,55 +5,113 @@ import {
     StyleSheet,
     TextInput,
     Image,
-    ActivityIndicator
+    ActivityIndicator,
+    Dimensions,
+    TouchableHighlight,
+    BackHandler
 } from 'react-native'
 
 import { StackNavigator, addNavigationHelpers } from 'react-navigation'
-import * as firebase from 'firebase'
+import Modal from "react-native-modal"
 
-import Firebase from '../api/firebase'
+import FirebaseHelpers from '../api/firebaseHelpers'
+import firebase from '../api/firebase'
+
+const {width, height} = Dimensions.get('window')
 
 class Loading extends Component {
 
     constructor(props){
         super(props)
-        Firebase.init()
         this.state = {
             initialView : null,
             userLoaded: false,
-            textLoading: 'Loading Memories Cloud...'
+            textLoading: 'Loading Memories Cloud...',
+            minVersion: '',
+            currentVersion: 1,
+            isModalVisible: false
         }
         this.getInitialView()
     }
 
     getInitialView(){
+
         const {navigate} = this.props.navigation
-        firebase.auth().onAuthStateChanged((user) => {    
-            if(user){
-                this.setState({                   
-                    initialView: 'Home',
-                    userLoaded: true,
-                    textLoading: 'Loading user...'
+
+        FirebaseHelpers.getMinVersion( (minVersion) => {        
+            this.setState({
+                textLoading: 'Loading Account...',
+                minVersion
+            })
+            if(this.state.minVersion > this.state.currentVersion){
+                this.setState({
+                    textLoading: 'Loading Request for Update...',
+                    isModalVisible: true
                 })
-            } else {
-                this.setState({                    
-                    initialView: 'Login',     
-                    userLoaded: false,               
-                    textLoading: 'Loading register...'
-                })
-            }      
-            setTimeout( () => {
-                navigate(this.state.initialView)
-            }, 1500)                  
+            } else {                
+                firebase.auth().onAuthStateChanged((user) => {    
+                    if(user){
+                        this.setState({                   
+                            initialView: 'Home',
+                            userLoaded: true,
+                            textLoading: 'Loading Memories List...'
+                        })
+                    } else {
+                        this.setState({                    
+                            initialView: 'Login',     
+                            userLoaded: false,               
+                            textLoading: 'Loading Register...'
+                        })
+                    }      
+                    setTimeout( () => {
+                        navigate(this.state.initialView)
+                    }, 0)                   
+                })        
+            }
         })        
+    }
+
+    toggleModal = () => this.setState({ isModalVisible: !this.state.isModalVisible })
+
+    exitApp(){
+        BackHandler.exitApp()
     }
 
     render(){        
         return (
-            <View style={styles.container}>                
+            <View style={styles.container}>           
+
                 <Image style={styles.logo} source={require('../images/logo.png')}/>                
                 <ActivityIndicator size="large" color="#fec600" />   
-                <Text style={styles.textLoading}>{this.state.textLoading}</Text>        
+                <Text style={styles.textLoading}>{this.state.textLoading}</Text>    
+
+                <Modal 
+                    style={styles.modalContainer}                
+                    isVisible={this.state.isModalVisible}
+                    supportedOrientations={['portrait', 'landscape']}
+                    onBackButtonPress={() => this.exitApp()}    
+                    animationIn = {'pulse'}  
+                    animationInTiming = {600}
+                    hideModalContentWhileAnimating = {true}
+                    backdropOpacity = {0.40}
+                >
+                    <View style={styles.modalBox}>
+                        
+                        <Text style={styles.modalTitle}>Update Needed</Text>
+
+                        <Text style={styles.modalText}>Sorry, but you need to update Memories Cloud. Please, check in your store the new version.</Text>
+
+                        <TouchableHighlight
+                            onPress={() => this.exitApp()}
+                            style={styles.exitButton}
+                            underlayColor = 'red'
+                        >                                       
+                            <Text style={styles.textExitButton}>Exit</Text>
+                        </TouchableHighlight> 
+
+                    </View>
+                </Modal>   
+
             </View>
         )
     }
@@ -78,6 +136,43 @@ const styles = StyleSheet.create({
         color: 'white',
         fontSize: 18,
         marginTop: 10
+    },
+    modalContainer: {
+        alignItems: 'center'
+    },
+    modalBox: {        
+        backgroundColor: 'white',
+        width: width - 60,
+        height: 220,
+        borderRadius: 5,
+        paddingVertical: 10,
+        paddingHorizontal: 10
+    },
+    modalTitle: {
+      textAlign: 'center',
+      color: '#0088ff',
+      marginBottom: 10,
+      fontSize: 25,
+      fontWeight: 'bold',
+      borderColor: '#0088ff',
+      borderBottomWidth: 3,
+      marginBottom: 10,
+      paddingVertical: 10
+    },
+    modalText: {
+        color: '#0088ff',
+        marginBottom: 20,
+        marginTop: 10,
+        textAlign: 'center'
+    },
+    exitButton:{
+        backgroundColor: 'red',
+        paddingVertical: 20
+    },
+    textExitButton: {
+       textAlign: 'center',
+       color: 'white',
+       fontWeight: 'bold'
     }
 })
 

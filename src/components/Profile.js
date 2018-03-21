@@ -91,7 +91,7 @@ class Profile extends Component {
 
                 <DropdownAlert 
                     ref={ref => this.dropdown = ref} 
-                    startDelta = {-200}
+                    updateStatusBar = {false}
                 /> 
 
             </View>

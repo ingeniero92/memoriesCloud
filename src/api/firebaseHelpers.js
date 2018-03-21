@@ -30,7 +30,7 @@ class FirebaseHelpers {
         ref.remove()
     }
 
-    // Getters
+    // Getters User
     static getName(userId, callback){
         let userNamePath = "/user/" + userId + "/details/name"
         firebase.database().ref(userNamePath).on('value', (snapshot) => {
@@ -51,6 +51,19 @@ class FirebaseHelpers {
             let memories = snapshot.val()
         }).then(response => Promise.all([response.val()]))
 
+    }
+
+    // Getters App
+
+    static getMinVersion(callback){
+        let minVersionPath = "/appData/minVersion"
+        firebase.database().ref(minVersionPath).on('value', (snapshot) => {
+            let minVersion = ''
+            if (snapshot.val()){
+                minVersion = snapshot.val()
+            }
+            callback(minVersion)
+        })
     }
 
 }

@@ -166,7 +166,7 @@ class NewMemory extends Component {
                         style={styles.backButton}
                         underlayColor = 'red'
                     >                                       
-                        <Text style={styles.textCancelButton}>Discard</Text>
+                        <Text style={styles.textBackButton}>Discard</Text>
                     </TouchableHighlight> 
                     
                 </View>
@@ -228,7 +228,7 @@ const styles = StyleSheet.create({
        color: '#0088ff',
        fontWeight: 'bold'
     },
-    textCancelButton: {
+    textBackButton: {
         textAlign: 'center',
         color: 'white',
         fontWeight: 'bold'

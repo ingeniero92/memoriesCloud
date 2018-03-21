@@ -6,6 +6,7 @@ import{
     FlatList,
     Image,
     TouchableWithoutFeedback,
+    TouchableHighlight,
     ScrollView,
     Alert,
     TextInput,
@@ -16,6 +17,7 @@ import{
     AppState
 } from 'react-native'
 
+import Modal from "react-native-modal"
 import Icon from 'react-native-vector-icons/FontAwesome'
 import DropdownAlert from 'react-native-dropdownalert'
 import * as firebase from 'firebase'
@@ -36,7 +38,10 @@ class List extends Component {
         this.state = {
             uid: '',
             refreshing: false,
-            appState: ''
+            appState: '',
+            isModalVisible: false,
+            modalMemoryId: '',
+            modalMemoryText: ''
         }
         this.getUser()
     }
@@ -100,10 +105,21 @@ class List extends Component {
     }
 
     deleteMemory(memoryId){      
-        FirebaseHelpers.removeMemory(this.state.uid,memoryId)        
+        this.toggleModal()
+        FirebaseHelpers.removeMemory(this.state.uid,this.state.modalMemoryId)        
         this.props.fetchData(this.state.uid)
         this.dropdown.alertWithType('success', 'Success!', 'Memory Deleted!')   
     }   
+
+    showDeleteModal(text,memoryId){
+        this.setState({
+            modalMemoryId: memoryId,
+            modalMemoryText: text
+        })
+        this.toggleModal()
+    }
+
+    toggleModal = () => this.setState({ isModalVisible: !this.state.isModalVisible })
 
     renderItem(item){   
         const {navigate} = this.props.navigation    
@@ -140,7 +156,7 @@ class List extends Component {
                     </TouchableWithoutFeedback>
                     
                     <TouchableWithoutFeedback                         
-                        onPress={() => this.deleteMemory(item.key)}
+                        onPress={() => this.showDeleteModal(item.text,item.key)}
                     >
                         <Icon 
                             name="trash"
@@ -149,7 +165,50 @@ class List extends Component {
                             style={styles.memoryIcon}
                         />
                     </TouchableWithoutFeedback>
-                </View>              
+                </View>     
+
+                <Modal 
+                    style={styles.modalContainer}                
+                    isVisible={this.state.isModalVisible}
+                    supportedOrientations={['portrait', 'landscape']}
+                    onBackdropPress={() => this.toggleModal()}     
+                    onBackButtonPress={() => this.toggleModal()}    
+                    animationIn = {'pulse'}  
+                    animationOut = {'pulse'} 
+                    animationInTiming = {600}
+                    animationOutTiming = {200}
+                    hideModalContentWhileAnimating = {true}
+                    backdropOpacity = {0.40}
+                >
+                    <View style={styles.modalBox}>
+                        
+                        <Text style={styles.modalTitle}>Delete Memory?</Text>
+
+                        <View style={styles.memoryTextModal}>
+                            <ScrollView horizontal>
+                                <TextInput editable = {false} style={styles.memoryModalText}>{this.state.modalMemoryText}</TextInput>
+                            </ScrollView>  
+                        </View>
+
+                        <TouchableHighlight
+                            onPress={() => this.deleteMemory()}
+                            style={styles.deleteButton}
+                            underlayColor = 'red'
+                        >                                       
+                            <Text style={styles.textDeleteButton}>Delete</Text>
+                        </TouchableHighlight>  
+
+                        <TouchableHighlight
+                            onPress={() => this.toggleModal()}
+                            style={styles.backButton}
+                            underlayColor = '#fec600'
+                        >                                       
+                            <Text style={styles.textBackButton}>Back</Text>
+                        </TouchableHighlight> 
+
+                    </View>
+                </Modal>           
+
             </View>   
         )
     }
@@ -189,11 +248,12 @@ class List extends Component {
                     </ScrollView>
                     :
                     <Text style={styles.textNoMemories}>You can add a memory easily with the clipboard, or the "Share Tool", selecting any text in your device and pressing Share with Memories Cloud!</Text>
-                }
+                }                
 
                 <DropdownAlert 
                     ref={ref => this.dropdown = ref} 
                     startDelta = {-200}
+                    updateStatusBar = {false}
                 /> 
 
                 {this.props.data.isFetching &&
@@ -290,7 +350,59 @@ const styles = StyleSheet.create({
         backgroundColor: 'black',
         justifyContent: 'center',
         alignItems: 'center'
-    }
+    },
+    modalBox: {        
+        backgroundColor: 'white',
+        width: width - 60,
+        height: 280,
+        borderRadius: 5,
+        paddingVertical: 10,
+        paddingHorizontal: 10
+    },
+    modalContainer: {
+        alignItems: 'center'
+    },
+    modalTitle: {
+      textAlign: 'center',
+      color: '#0088ff',
+      marginBottom: 10,
+      fontSize: 25,
+      fontWeight: 'bold',
+      borderColor: '#0088ff',
+      borderBottomWidth: 3,
+      marginBottom: 10,
+      paddingVertical: 10
+    },
+    backButton:{
+        backgroundColor: '#fec600',
+        paddingVertical: 20
+    },
+    deleteButton:{
+        backgroundColor: 'red',
+        paddingVertical: 20,
+        marginBottom: 10
+    },
+    textBackButton: {
+       textAlign: 'center',
+       color: '#0088ff',
+       fontWeight: 'bold'
+    },
+    textDeleteButton: {
+        textAlign: 'center',
+        color: 'white',
+        fontWeight: 'bold'
+    },
+    memoryTextModal: {
+        borderWidth: 1,
+        borderColor: 'white',
+        borderRadius: 10,
+        backgroundColor: '#0088ff',
+        marginBottom: 10,
+        height: 50
+    },
+    memoryModalText: {
+        color: 'white'
+    },
   });
   
 //mapStateToProps
