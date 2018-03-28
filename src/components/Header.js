@@ -10,10 +10,6 @@ import {
 import Icon from 'react-native-vector-icons/FontAwesome'
 import * as Animatable from 'react-native-animatable'
 
-{/* Componente de funcion, en lugar de clase, ya que no tiene estado, solo muestra datos */}
-{/* Si en vez de {} pusieramos () */}
-{/* Props puede ir con parentesis. O ({navigation}) para poder usarlo como parametro */}
-
 class Header extends Component {
 
     constructor(props){
@@ -22,11 +18,16 @@ class Header extends Component {
         }
     }
 
-    handleViewRef = ref => this.view = ref;
+    handleMenuView = ref => this.menu = ref;
+    handleRefreshView = ref => this.refresh = ref;
 
     toggleMenu(){        
-        this.view.bounceIn(2000)
+        this.menu.bounceIn(2000)
         this.props.toggle()
+    }
+
+    refreshList(){
+        this.refresh.rotate(1250)
     }
 
     render(){
@@ -34,7 +35,7 @@ class Header extends Component {
             <View style = {styles.container}>
             
                 <TouchableWithoutFeedback onPress = { () => this.toggleMenu()}>
-                    <Animatable.View ref={this.handleViewRef}>
+                    <Animatable.View ref={this.handleMenuView}>
                         <Icon
                             name = "bars"
                             color = "white"
@@ -45,12 +46,14 @@ class Header extends Component {
 
                 <Image style={styles.logo} source={require('../images/logo.png')}/>
 
-                <TouchableWithoutFeedback>
-                <Icon 
-                    name="search"
-                    color="transparent"
-                    size={25}
-                />
+                <TouchableWithoutFeedback onPress = { () => this.refreshList()}>
+                    <Animatable.View ref={this.handleRefreshView}>
+                        <Icon 
+                            name="refresh"
+                            color="white"
+                            size={25}
+                        />
+                    </Animatable.View>
                 </TouchableWithoutFeedback>
 
             </View>

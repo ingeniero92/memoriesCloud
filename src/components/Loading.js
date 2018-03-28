@@ -17,6 +17,8 @@ import Modal from "react-native-modal"
 import FirebaseHelpers from '../api/firebaseHelpers'
 import firebase from '../api/firebase'
 
+import CURRENT_VERSION from '../constants'
+
 const {width, height} = Dimensions.get('window')
 
 class Loading extends Component {
@@ -28,7 +30,6 @@ class Loading extends Component {
             userLoaded: false,
             textLoading: 'Loading Memories Cloud...',
             minVersion: '',
-            currentVersion: 1,
             isModalVisible: false
         }
         this.getInitialView()
@@ -43,7 +44,7 @@ class Loading extends Component {
                 textLoading: 'Loading Account...',
                 minVersion
             })
-            if(this.state.minVersion > this.state.currentVersion){
+            if(this.state.minVersion > CURRENT_VERSION){
                 this.setState({
                     textLoading: 'Loading Request for Update...',
                     isModalVisible: true

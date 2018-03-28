@@ -30,7 +30,6 @@ import FirebaseHelpers from '../api/firebaseHelpers'
 
 const {width, height} = Dimensions.get('window')
 
-{ /* Este metodo, envia a la vista Details, un objeto item, con el contenido de item */ }
 class List extends Component {
 
     constructor(props){
