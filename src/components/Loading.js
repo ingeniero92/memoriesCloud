@@ -17,7 +17,7 @@ import Modal from "react-native-modal"
 import FirebaseHelpers from '../api/firebaseHelpers'
 import firebase from '../api/firebase'
 
-import CURRENT_VERSION from '../constants'
+import {CURRENT_VERSION} from '../constants'
 
 const {width, height} = Dimensions.get('window')
 
@@ -29,27 +29,21 @@ class Loading extends Component {
             initialView : null,
             userLoaded: false,
             textLoading: 'Loading Memories Cloud...',
-            minVersion: '',
             isModalVisible: false
         }
         this.getInitialView()
     }
 
     getInitialView(){
-
         const {navigate} = this.props.navigation
 
-        FirebaseHelpers.getMinVersion( (minVersion) => {        
-            this.setState({
-                textLoading: 'Loading Account...',
-                minVersion
-            })
-            if(this.state.minVersion > CURRENT_VERSION){
+        FirebaseHelpers.getMinVersion( (minVersion) => {      
+            if(minVersion > CURRENT_VERSION){
                 this.setState({
                     textLoading: 'Loading Request for Update...',
                     isModalVisible: true
                 })
-            } else {                
+            } else {
                 firebase.auth().onAuthStateChanged((user) => {    
                     if(user){
                         this.setState({                   
@@ -66,10 +60,12 @@ class Loading extends Component {
                     }      
                     setTimeout( () => {
                         navigate(this.state.initialView)
-                    }, 0)                   
-                })        
+                    }, 500)                   
+                })    
             }
-        })        
+
+                  
+        })   
     }
 
     toggleModal = () => this.setState({ isModalVisible: !this.state.isModalVisible })

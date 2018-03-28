@@ -107,7 +107,7 @@ class List extends Component {
         this.toggleModal()
         FirebaseHelpers.removeMemory(this.state.uid,this.state.modalMemoryId)        
         this.props.fetchData(this.state.uid)
-        this.dropdown.alertWithType('success', 'Success!', 'Memory Deleted!')   
+        //this.dropdown.alertWithType('success', 'Success!', 'Memory Deleted!')   
     }   
 
     showDeleteModal(text,memoryId){

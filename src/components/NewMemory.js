@@ -18,10 +18,12 @@ import ShareExtension from 'react-native-share-extension'
 import FirebaseHelpers from '../api/firebaseHelpers'
 import {getCurrentDate} from '../lib' 
 
+import {MAX_MEMORY_LENGTH} from '../constants'
+
 const {width, height} = Dimensions.get('window')
 
 class NewMemory extends Component {
-
+    
     constructor(props){        
         super(props)
         this.state = {
@@ -39,7 +41,7 @@ class NewMemory extends Component {
     }    
 
     componentDidMount() {
-
+        
         try{
             this.unsubscriber = firebase.auth().onAuthStateChanged((user) => {
                 if(user){
@@ -66,9 +68,11 @@ class NewMemory extends Component {
     }
 
     async copyMemoryFromClipboard(){
+        console.log(MAX_MEMORY_LENGTH)
         var value = await Clipboard.getString() 
+        subValue = String.prototype.substr.call(value,0,MAX_MEMORY_LENGTH)
         this.setState({ 
-            value, 
+            value: subValue, 
             source: 'clipboard' 
         })
     }
@@ -82,10 +86,11 @@ class NewMemory extends Component {
             if(user){
                 try {
                     const { type, value } = await ShareExtension.data()
+                    var subValue = String.prototype.substr.call(value,0,MAX_MEMORY_LENGTH)
                     this.setState({
                         source: 'share',
                         type,
-                        value,
+                        value: subValue,
                         loged: true
                     })            
                 } catch(e) {
@@ -149,7 +154,11 @@ class NewMemory extends Component {
 
                     <View style={styles.memoryTextContainer}>
                         <ScrollView horizontal>
-                            <TextInput editable = {false} style={styles.memoryText}>{this.state.value}</TextInput>
+                            <TextInput 
+                                editable = {false} 
+                                style={styles.memoryText}
+                                value = {this.state.value}
+                            />
                         </ScrollView>  
                     </View>
 
