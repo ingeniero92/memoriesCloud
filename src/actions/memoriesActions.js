@@ -14,10 +14,10 @@ export const getMemoriesSuccess = data => {
     }
 }
 
-export const getMemoriesFailure = (err) => {
+export const getMemoriesFailure = (error) => {
     return {
         type: FETCHING_MEMORIES_ERROR,
-        err
+        error
     }
 }
 
@@ -28,6 +28,6 @@ export const fetchMemories = (user) => {
             .then(([response]) => {
                 dispatch(getMemoriesSuccess(response))
             })
-            .catch((err) => dispatch(getMemoriesFailure(err)))
+            .catch((error) => dispatch(getMemoriesFailure(error)))
     }
 }

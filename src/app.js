@@ -5,7 +5,8 @@ import {
     Text,
     View,
     BackHandler,
-    ActivityIndicator
+    ActivityIndicator,
+    Dimensions
 } from 'react-native';
 
 import SlideMenu from 'react-native-side-menu'
@@ -75,8 +76,9 @@ class App extends Component{
         return (           
             <View style={[{flex:1}, styles.container]}>
                 <SlideMenu
+                    openMenuOffset = {(Dimensions.get('window').width/3)*2}
                     disableGestures = {true}
-                    menu = {<Menu navigation={this.props.navigation} setLoading = {this.setLoading.bind(this)} />}
+                    menu = {<Menu navigation={this.props.navigation} updateMenu = {this.updateMenu.bind(this)} setLoading = {this.setLoading.bind(this)} menuWidth = {(Dimensions.get('window').width/3)*2}/>}
                     isOpen = {this.state.isOpen}
                     onChange = { (isOpen) => this.updateMenu(isOpen)}     
                 >

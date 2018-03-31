@@ -95,8 +95,8 @@ class NewMemory extends Component {
                         value: subValue,
                         loged: true
                     })            
-                } catch(e) {
-                    console.log('error', e)
+                } catch(error) {
+                    console.log(error)
                 }
             } else {
                 this.setState({
@@ -143,7 +143,7 @@ class NewMemory extends Component {
 
     signUp(){
         ShareExtension.close()
-        Linking.openURL('com.memoriescloud://').catch(err => console.error(err));
+        Linking.openURL('com.memoriescloud://').catch(error => console.error(error));
     }
 
     render(){     
@@ -258,14 +258,12 @@ const styles = StyleSheet.create({
     memoryContainer: {
         flex: 1,
         justifyContent: 'center',
-        marginBottom: 10,
-        width: width
+        marginBottom: 10
     },
     memoryTextContainer: {
         borderWidth: 1,
         borderColor: 'white',
         borderRadius: 10,
-        width: width - 20,
         backgroundColor: 'white',
         marginBottom: 10
     },

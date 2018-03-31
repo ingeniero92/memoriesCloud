@@ -32,7 +32,7 @@ class Header extends Component {
     }
 
     refreshList(){
-        this.refresh.rotate(500)
+        this.refresh.rotate(200)
         this.props.fetchMemories(this.props.user.user.uid) 
     }
 

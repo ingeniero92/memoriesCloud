@@ -53,7 +53,9 @@ class FirebaseHelpers {
     // Getters App
 
     static getMinVersion(callback){
+        
         let minVersionPath = "/appData/minVersion"
+        
         firebase.database().ref(minVersionPath).on('value', (snapshot) => {
             let minVersion = ''
             if (snapshot.val()){

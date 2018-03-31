@@ -42,9 +42,18 @@ class List extends Component {
             appState: '',
             isModalVisible: false,
             modalMemoryId: '',
-            modalMemoryText: ''
+            modalMemoryText: '',
+            width,
+            height
         }
         this.getUser()
+    }
+
+    _handleLayout = event => {
+        this.setState({
+            width: Dimensions.get('window').width,
+            height: Dimensions.get('window').height
+        })
     }
     
     // Metodos para cargar la lista al volver desde el background
@@ -103,7 +112,7 @@ class List extends Component {
         this.dropdown.alertWithType('success', 'Text copied to clipboard:', text)
     }
 
-    copyMemoryFromClipboard(){
+    copyMemoryFromClipboard(){        
         const {navigate} = this.props.navigation
         navigate('NewMemory', {source: 'clipboard'})
     }
@@ -128,15 +137,15 @@ class List extends Component {
     renderItem(item){   
         const {navigate} = this.props.navigation    
         return (
-            <View style={styles.memoryContainer}>
+            <View style={[styles.memoryContainer, { width: this.state.width}]}>
 
-                <View style={styles.memoryTextContainer}>
+                <View style={[styles.memoryTextContainer, { width: this.state.width - (30*3 + 40) }]}>
                     <ScrollView horizontal>
                         <TextInput editable = {false} style={styles.memoryText}>{item.text}</TextInput>
                     </ScrollView>            
                 </View>
 
-                <View style={styles.memoryIconsContainer}>
+                <View style={[styles.memoryIconsContainer, {width: 30*3 + 10}]}>
                     <TouchableWithoutFeedback 
                         onPress={() => this.onShare(item.text)}
                     >
@@ -217,9 +226,9 @@ class List extends Component {
         )
     }
 
-    render(){     
-        return(
-            <View style={styles.container}>
+    render(){    
+        return(            
+            <View style={styles.container} onLayout={this._handleLayout}>
             
                 <View style={styles.copyMemoryFromClipboardContainer}> 
                     <TouchableWithoutFeedback 
@@ -305,19 +314,16 @@ const styles = StyleSheet.create({
         flex: 1,        
         flexDirection: 'row',
         marginBottom: 10,
-        width: width
     },
     memoryTextContainer: {
         borderWidth: 1,
         borderColor: 'white',
         borderRadius: 10,
-        width: width - (30*3 + 40),
         backgroundColor: 'white'
     },
     memoryIconsContainer:{
         flexDirection: 'row',
         justifyContent: 'center',
-        width: 30*3 + 10,
         marginTop: 15
     },
     memoryText: {

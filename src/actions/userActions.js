@@ -14,10 +14,10 @@ export const getUserSuccess = data => {
     }
 }
 
-export const getUserFailure = (err) => {
+export const getUserFailure = (error) => {
     return {
         type: FETCHING_USER_ERROR,
-        err
+        error
     }
 }
 
@@ -27,8 +27,8 @@ export const fetchUser = () => {
         try {
             let actualUser = FirebaseHelpers.getActualUser()            
             dispatch(getUserSuccess(actualUser))
-        } catch(err){
-            dispatch(getUserFailure(err))
+        } catch(error){
+            dispatch(getUserFailure(error))
         }        
 
     }

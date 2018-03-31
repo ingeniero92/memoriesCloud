@@ -35,6 +35,7 @@ class Loading extends Component {
     }
 
     getInitialView(){
+
         const {navigate} = this.props.navigation
 
         FirebaseHelpers.getMinVersion( (minVersion) => {      
@@ -60,12 +61,11 @@ class Loading extends Component {
                     }      
                     setTimeout( () => {
                         navigate(this.state.initialView)
-                    }, 500)                   
+                    }, 0)                   
                 })    
-            }
-
-                  
+            }                  
         })   
+        
     }
 
     toggleModal = () => this.setState({ isModalVisible: !this.state.isModalVisible })

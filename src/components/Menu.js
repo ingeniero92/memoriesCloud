@@ -28,6 +28,10 @@ class Menu extends Component {
         this.getUser()
     }
 
+    _handleLayout = event => {
+        this.props.updateMenu(false)
+    }
+
     getUser(){
         try {
             firebase.auth().onAuthStateChanged((user) => {                
@@ -57,9 +61,9 @@ class Menu extends Component {
     render(){
         const {navigate} = this.props.navigation
         return (
-            <View style={styles.container}>
+            <View style={styles.container} onLayout={this._handleLayout}>
 
-                <View style={styles.userContainer}>
+                <View style={[styles.userContainer, {width: (this.props.menuWidth)}]}>
                     <View style={styles.settingsContainer}>
                         <TouchableWithoutFeedback 
                             onPress={() => navigate('Profile')}
@@ -91,7 +95,7 @@ class Menu extends Component {
                     </TouchableWithoutFeedback>
                 </View>
 
-                <ScrollView style={styles.scrollContainer}>
+                <ScrollView style={[styles.scrollContainer, {width: (this.props.menuWidth) }]}>
                     <View style={styles.textWithIcon}>
                         <View style={styles.withIcon}>
                             <Icon 
@@ -141,8 +145,7 @@ const styles = StyleSheet.create({
     userContainer: {
         justifyContent: 'space-between',
         flexDirection: 'row',
-        alignItems: 'center',
-        width: (width/3)*2,
+        alignItems: 'center',        
         borderColor: 'rgba(255, 255, 255, .5)',
         borderBottomWidth: 3,
         paddingHorizontal: 20,
@@ -173,7 +176,6 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     scrollContainer: {
-        width: (width/3)*2
     },
     rightIcon: {
         paddingRight: 20
