@@ -1,4 +1,4 @@
-import {FETCHING_DATA, FETCHING_DATA_SUCCESS, FETCHING_DATA_ERROR} from '../constants';
+import {FETCHING_MEMORIES, FETCHING_MEMORIES_SUCCESS, FETCHING_MEMORIES_ERROR} from '../constants';
 
 const initialState = {
     memories: [],
@@ -7,9 +7,9 @@ const initialState = {
     success: false
 }
 
-export default dataReducer = (state = initialState, action) => {
+export default memoriesReducer = (state = initialState, action) => {
     switch(action.type){        
-        case FETCHING_DATA:
+        case FETCHING_MEMORIES:
             return {
                 ...state,
                 memories: [],
@@ -17,7 +17,7 @@ export default dataReducer = (state = initialState, action) => {
                 isFetching: true,
                 success: false
             }
-        case FETCHING_DATA_SUCCESS: 
+        case FETCHING_MEMORIES_SUCCESS: 
             return {
                 ...state,
                 memories: action.data,
@@ -25,7 +25,7 @@ export default dataReducer = (state = initialState, action) => {
                 error: false,
                 success: true
             }
-        case FETCHING_DATA_ERROR:
+        case FETCHING_MEMORIES_ERROR:
             return {
                 ...state,
                 memories: [],

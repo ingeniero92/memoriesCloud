@@ -8,16 +8,6 @@ class FirebaseHelpers {
         return firebase.database().ref(userNamePath).set(name)
     }
     
-    static setUserBio(userId, bio){
-        let userNamePath = "/user/" + userId + "/details/bio"
-        return firebase.database().ref(userNamePath).set(bio)
-    }
-    
-    static setUserPlace(userId, place){
-        let userNamePath = "/user/" + userId + "/details/place"
-        return firebase.database().ref(userNamePath).set(place)
-    }
-
     static setMemory(userId, memory){
         let userNamePath = "/user/" + userId + "/memories"
         var ref = firebase.database().ref(userNamePath)
@@ -31,6 +21,11 @@ class FirebaseHelpers {
     }
 
     // Getters User
+
+    static getActualUser(){
+        return firebase.auth().currentUser
+    }
+
     static getName(userId, callback){
         let userNamePath = "/user/" + userId + "/details/name"
         firebase.database().ref(userNamePath).on('value', (snapshot) => {
@@ -42,6 +37,8 @@ class FirebaseHelpers {
         })
     }
 
+    // Getter Memories
+    
     static getMemories(userId){
 
         let userMemoriesPath = "/user/" + userId + "/memories"

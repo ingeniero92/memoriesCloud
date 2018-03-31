@@ -116,7 +116,7 @@ const styles = StyleSheet.create({
 
 //mapStateToProps
 const mapStateToProps = state => {
-    return {data: state.data, nav: state.nav}
+    return {memories: state.memories, nav: state.nav}
 }
 
 export default connect(mapStateToProps)(App)

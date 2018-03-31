@@ -24,9 +24,11 @@ import * as firebase from 'firebase'
 import * as Animatable from 'react-native-animatable'
 import {connect} from 'react-redux'
 
-import {fetchData} from '../actions'
 import {getSortedMemoriesFromObject} from '../lib'
 import FirebaseHelpers from '../api/firebaseHelpers'
+
+import { fetchMemories } from '../actions/memoriesActions'
+import { fetchUser } from '../actions/userActions'
 
 const {width, height} = Dimensions.get('window')
 
@@ -44,6 +46,8 @@ class List extends Component {
         }
         this.getUser()
     }
+    
+    // Metodos para cargar la lista al volver desde el background
 
     componentDidMount() {
         AppState.addEventListener('change', this._handleAppStateChange);
@@ -56,19 +60,20 @@ class List extends Component {
     _handleAppStateChange = (nextAppState) => {
         if (this.state.appState.match(/inactive|background/) && nextAppState === 'active') {
             try {
-                this.props.fetchData(this.state.uid)
+                this.props.fetchMemories(this.state.uid)
             } catch(error){
                 console.log(error)
             }            
         }
         this.setState({appState: nextAppState});
     }
-
+    
     async getUser(){
+
         try {
             firebase.auth().onAuthStateChanged((user) => {             
-                if(user){                                    
-                    this.props.fetchData(user.uid)
+                if(user){                                
+                    this.props.fetchMemories(user.uid)
                     this.setState({     
                         uid: user.uid
                     }) 
@@ -106,7 +111,7 @@ class List extends Component {
     deleteMemory(memoryId){      
         this.toggleModal()
         FirebaseHelpers.removeMemory(this.state.uid,this.state.modalMemoryId)        
-        this.props.fetchData(this.state.uid)
+        this.props.fetchMemories(this.state.uid)
         //this.dropdown.alertWithType('success', 'Success!', 'Memory Deleted!')   
     }   
 
@@ -175,7 +180,7 @@ class List extends Component {
                     animationIn = {'pulse'}  
                     animationOut = {'pulse'} 
                     animationInTiming = {600}
-                    animationOutTiming = {200}
+                    animationOutTiming = {1}
                     hideModalContentWhileAnimating = {true}
                     backdropOpacity = {0.40}
                 >
@@ -234,14 +239,14 @@ class List extends Component {
 
                 <Text style={styles.titleText}>My saved Memories:</Text>
 
-                {this.props.data.memories 
+                {this.props.memories.memories 
                     ?
                     <ScrollView style={styles.memoriesContainer}>                            
                         <FlatList             
                             SeparatorComponent={() => <View style={{width: 5}} />}
                             renderItem={({item}) => this.renderItem(item)}                
-                            data = {getSortedMemoriesFromObject(this.props.data.memories)}
-                            extraData = {this.props.data.isFetching}  
+                            data = {getSortedMemoriesFromObject(this.props.memories.memories)}
+                            extraData = {this.props.memories.isFetching}  
                             keyExtractor={(item, index) => index.toString()}  
                         />
                     </ScrollView>
@@ -255,7 +260,7 @@ class List extends Component {
                     updateStatusBar = {false}
                 /> 
 
-                {this.props.data.isFetching &&
+                {this.props.memories.isFetching &&
                     <View style={styles.loading}>
                         <ActivityIndicator style={styles.activityIndicator} size="large" color="white" />   
                     </View>
@@ -406,13 +411,14 @@ const styles = StyleSheet.create({
   
 //mapStateToProps
 const mapStateToProps = state => {
-    return {data: state.data}
+    return {memories: state.memories, user: state.user}
 }
 
 //mapDispatchToProps
 const mapDispatchToProps = dispatch => {
     return {
-        fetchData: (user) => dispatch(fetchData(user))
+        fetchMemories: (user) => dispatch(fetchMemories(user)),
+        fetchUser: () => dispatch(fetchUser())
     }
 }
 

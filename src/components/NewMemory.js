@@ -9,7 +9,8 @@ import {
     ScrollView,
     Clipboard,
     Image,
-    Linking
+    Linking,
+    ActivityIndicator
 } from 'react-native'
 
 import * as firebase from 'firebase'
@@ -30,7 +31,9 @@ class NewMemory extends Component {
             source: '',
             value: '',
             uid: '',
-            loged: false
+            saving: false,
+            loged: false,
+            saveDisabled: false
         }    
     }
 
@@ -68,7 +71,6 @@ class NewMemory extends Component {
     }
 
     async copyMemoryFromClipboard(){
-        console.log(MAX_MEMORY_LENGTH)
         var value = await Clipboard.getString() 
         subValue = String.prototype.substr.call(value,0,MAX_MEMORY_LENGTH)
         this.setState({ 
@@ -118,6 +120,10 @@ class NewMemory extends Component {
     }
 
     save(){
+        this.setState({
+            saveDisabled: true,
+            saving: true
+        })
         if(this.state.uid != ''){
             try{
 
@@ -166,6 +172,7 @@ class NewMemory extends Component {
                         onPress={() => this.save()}
                         style={styles.saveButton}
                         underlayColor = '#fec600'
+                        disabled = {this.state.saveDisabled}
                     >                                       
                         <Text style={styles.textSaveButton}>Save</Text>
                     </TouchableHighlight>  
@@ -208,6 +215,12 @@ class NewMemory extends Component {
 
                 </View>
                 }    
+
+                {this.state.saving &&
+                    <View style={styles.loading}>
+                        <ActivityIndicator style={styles.activityIndicator} size="large" color="white" />   
+                    </View>
+                }   
 
             </View>
         )
@@ -301,6 +314,17 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         color: 'white',
         fontWeight: 'bold'
+    },
+    loading: {
+        position: 'absolute',
+        left: 0,
+        right: 0,
+        top: 0,
+        bottom: 0,
+        opacity: 0.5,
+        backgroundColor: 'black',
+        justifyContent: 'center',
+        alignItems: 'center'
     },
 })
 

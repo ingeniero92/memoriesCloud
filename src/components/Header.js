@@ -9,6 +9,10 @@ import {
 
 import Icon from 'react-native-vector-icons/FontAwesome'
 import * as Animatable from 'react-native-animatable'
+import {connect} from 'react-redux'
+
+import { fetchMemories } from '../actions/memoriesActions'
+import { fetchUser } from '../actions/userActions'
 
 class Header extends Component {
 
@@ -16,6 +20,7 @@ class Header extends Component {
         super(props)
         this.state = {
         }
+        this.props.fetchUser()
     }
 
     handleMenuView = ref => this.menu = ref;
@@ -27,7 +32,8 @@ class Header extends Component {
     }
 
     refreshList(){
-        this.refresh.rotate(1250)
+        this.refresh.rotate(500)
+        this.props.fetchMemories(this.props.user.user.uid) 
     }
 
     render(){
@@ -81,4 +87,17 @@ const styles = StyleSheet.create({
     }
 })
 
-export default Header
+//mapStateToProps
+const mapStateToProps = state => {
+    return {memories: state.memories, user: state.user}
+}
+
+//mapDispatchToProps
+const mapDispatchToProps = dispatch => {
+    return {
+        fetchMemories: (user) => dispatch(fetchMemories(user)),
+        fetchUser: () => dispatch(fetchUser())
+    }
+}
+
+export default connect(mapStateToProps,mapDispatchToProps)(Header)
