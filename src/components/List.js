@@ -14,7 +14,8 @@ import{
     Share,
     Clipboard,
     ActivityIndicator,
-    AppState
+    AppState,
+    TouchableNativeFeedback
 } from 'react-native'
 
 import Modal from "react-native-modal"
@@ -24,7 +25,7 @@ import * as firebase from 'firebase'
 import * as Animatable from 'react-native-animatable'
 import {connect} from 'react-redux'
 
-import {getSortedMemoriesFromObject} from '../lib'
+import { getSortedMemoriesFromObject, compareDates } from '../lib'
 import FirebaseHelpers from '../api/firebaseHelpers'
 
 import { fetchMemories } from '../actions/memoriesActions'
@@ -44,10 +45,37 @@ class List extends Component {
             modalMemoryId: '',
             modalMemoryText: '',
             width,
-            height
+            height,
+            difDateMessages: []
         }
         this.getUser()
     }
+
+    // Operaciones de Usuario
+    
+    async getUser(){
+        
+        try {
+            firebase.auth().onAuthStateChanged((user) => {             
+                if(user){     
+                    this.setState({     
+                        uid: user.uid
+                    }) 
+                    this.updateList()
+                }                             
+            })        
+        } catch (error){
+            console.log(error)
+        }        
+    }
+
+    // Metodo para actualizar la lista
+
+    updateList(){
+        this.props.fetchMemories(this.state.uid)
+    }
+
+    // Metodo para actualizar las dimensiones actuales del dispositivo (debido a los posibles giros de pantalla)
 
     _handleLayout = event => {
         this.setState({
@@ -69,29 +97,15 @@ class List extends Component {
     _handleAppStateChange = (nextAppState) => {
         if (this.state.appState.match(/inactive|background/) && nextAppState === 'active') {
             try {
-                this.props.fetchMemories(this.state.uid)
+                this.updateList()
             } catch(error){
                 console.log(error)
             }            
         }
         this.setState({appState: nextAppState});
     }
-    
-    async getUser(){
 
-        try {
-            firebase.auth().onAuthStateChanged((user) => {             
-                if(user){                                
-                    this.props.fetchMemories(user.uid)
-                    this.setState({     
-                        uid: user.uid
-                    }) 
-                }                             
-            })        
-        } catch (error){
-            console.log(error)
-        }        
-    }
+    // Metodo para compartir recuerdos
 
     onShare(text){      
         Share.share({
@@ -107,6 +121,8 @@ class List extends Component {
         })
     }
 
+    // Metodos para usar el portapapeles
+
     copyToClipboard(text) {
         Clipboard.setString(text);
         this.dropdown.alertWithType('success', 'Text copied to clipboard:', text)
@@ -117,12 +133,16 @@ class List extends Component {
         navigate('NewMemory', {source: 'clipboard'})
     }
 
+    // Metodos para borrar recuerdos
+
     deleteMemory(memoryId){      
         this.toggleModal()
         FirebaseHelpers.removeMemory(this.state.uid,this.state.modalMemoryId)        
-        this.props.fetchMemories(this.state.uid)
+        this.updateList()
         //this.dropdown.alertWithType('success', 'Success!', 'Memory Deleted!')   
     }   
+
+    // Metodos para mostrar el modal de borrar recuerdo
 
     showDeleteModal(text,memoryId){
         this.setState({
@@ -134,51 +154,119 @@ class List extends Component {
 
     toggleModal = () => this.setState({ isModalVisible: !this.state.isModalVisible })
 
+    // Metodos para pintar los recuerdos en la lista
+
+    getDifDates(date){
+        var dif = compareDates(date)
+        var difDateMessages = this.state.difDateMessages
+        difDateMessages.push(dif)
+        console.log(this.state.difDateMessages)
+        return dif
+    }
+
     renderItem(item){   
         const {navigate} = this.props.navigation    
+        var difDates = this.getDifDates(item.date)
         return (
-            <View style={[styles.memoryContainer, { width: this.state.width}]}>
 
-                <View style={[styles.memoryTextContainer, { width: this.state.width - (30*3 + 40) }]}>
-                    <ScrollView horizontal>
-                        <TextInput editable = {false} style={styles.memoryText}>{item.text}</TextInput>
-                    </ScrollView>            
+            <View>
+
+                {/* Separador de Fechas */}
+
+                {difDates &&
+                    <View style = {styles.dateSeparatorContainer}>                     
+                        <Text style = {styles.dateSeparatorText}>{difDates}</Text>
+                    </View>
+                }
+
+                {/* Recuerdo */}
+
+                <View style={[styles.memoryContainer, { width: this.state.width}]}>                                 
+
+                    <View style={[styles.memoryTextContainer, { width: this.state.width - (30*3 + 40) }]}>
+                        <ScrollView horizontal>
+                            <TextInput editable = {false} style={styles.memoryText}>{item.text}</TextInput>
+                        </ScrollView>            
+                    </View>
+
+                    <View style={[styles.memoryIconsContainer, {width: 30*3 + 10}]}>
+                        <TouchableWithoutFeedback 
+                            onPress={() => this.onShare(item.text)}
+                        >
+                            <Icon 
+                                name="share-alt-square"
+                                color = "white"
+                                size = {20}
+                                style={styles.memoryIcon}
+                            />
+                        </TouchableWithoutFeedback>
+
+                        <TouchableWithoutFeedback 
+                            onPress={() => this.copyToClipboard(item.text)}
+                        >
+                            <Icon 
+                                name="copy"
+                                color = "white"
+                                size = {20}
+                                style={styles.memoryIcon}
+                            />
+                        </TouchableWithoutFeedback>
+                        
+                        <TouchableWithoutFeedback                         
+                            onPress={() => this.showDeleteModal(item.text,item.key)}
+                        >
+                            <Icon 
+                                name="trash"
+                                color = "#d80404"
+                                size = {20}
+                                style={styles.memoryIcon}
+                            />
+                        </TouchableWithoutFeedback>
+                    </View>         
+
+                </View>                  
+
+            </View>
+
+        )
+    }
+
+    render(){   
+        return(            
+            <View style={styles.container} onLayout={this._handleLayout}>
+            
+                <View style={styles.copyMemoryFromClipboardContainer}> 
+                    <TouchableWithoutFeedback 
+                        onPress={() => this.copyMemoryFromClipboard()}
+                    >
+                        <View style={styles.copyMemoryFromClipboard}>
+                            <TextInput editable = {false} style={styles.copyMemoryFromClipboardText}>Get memory from clipboard</TextInput>
+                            <Icon 
+                                name="clipboard"
+                                color = "#0088ff"
+                                size = {30}
+                                style={styles.pasteIcon}
+                            />
+                        </View>                
+                    </TouchableWithoutFeedback>
                 </View>
 
-                <View style={[styles.memoryIconsContainer, {width: 30*3 + 10}]}>
-                    <TouchableWithoutFeedback 
-                        onPress={() => this.onShare(item.text)}
-                    >
-                        <Icon 
-                            name="share-alt-square"
-                            color = "white"
-                            size = {20}
-                            style={styles.memoryIcon}
-                        />
-                    </TouchableWithoutFeedback>
+                <Text style={styles.titleText}>My saved Memories:</Text>
 
-                    <TouchableWithoutFeedback 
-                        onPress={() => this.copyToClipboard(item.text)}
-                    >
-                        <Icon 
-                            name="copy"
-                            color = "white"
-                            size = {20}
-                            style={styles.memoryIcon}
+                {this.props.memories.memories 
+                    ?
+                    <ScrollView style={styles.memoriesContainer}>                            
+                        <FlatList             
+                            SeparatorComponent={() => <View style={{width: 5}} />}
+                            renderItem={({item}) => this.renderItem(item)}                
+                            data = {getSortedMemoriesFromObject(this.props.memories.memories)}
+                            extraData = {this.props.memories.isFetching}  
+                            keyExtractor={(item, index) => index.toString()}  
                         />
-                    </TouchableWithoutFeedback>
-                    
-                    <TouchableWithoutFeedback                         
-                        onPress={() => this.showDeleteModal(item.text,item.key)}
-                    >
-                        <Icon 
-                            name="trash"
-                            color = "#d80404"
-                            size = {20}
-                            style={styles.memoryIcon}
-                        />
-                    </TouchableWithoutFeedback>
-                </View>     
+                    </ScrollView>
+                    :
+                    <Text style={styles.textNoMemories}>You can add a memory easily with the clipboard, or the "Share Tool", selecting any text in your device and pressing Share with Memories Cloud!</Text>
+                }                
 
                 <Modal 
                     style={styles.modalContainer}                
@@ -220,48 +308,7 @@ class List extends Component {
                         </TouchableHighlight> 
 
                     </View>
-                </Modal>           
-
-            </View>   
-        )
-    }
-
-    render(){    
-        return(            
-            <View style={styles.container} onLayout={this._handleLayout}>
-            
-                <View style={styles.copyMemoryFromClipboardContainer}> 
-                    <TouchableWithoutFeedback 
-                        onPress={() => this.copyMemoryFromClipboard()}
-                    >
-                        <View style={styles.copyMemoryFromClipboard}>
-                            <TextInput editable = {false} style={styles.copyMemoryFromClipboardText}>Get memory from clipboard</TextInput>
-                            <Icon 
-                                name="clipboard"
-                                color = "#0088ff"
-                                size = {30}
-                                style={styles.pasteIcon}
-                            />
-                        </View>                
-                    </TouchableWithoutFeedback>
-                </View>
-
-                <Text style={styles.titleText}>My saved Memories:</Text>
-
-                {this.props.memories.memories 
-                    ?
-                    <ScrollView style={styles.memoriesContainer}>                            
-                        <FlatList             
-                            SeparatorComponent={() => <View style={{width: 5}} />}
-                            renderItem={({item}) => this.renderItem(item)}                
-                            data = {getSortedMemoriesFromObject(this.props.memories.memories)}
-                            extraData = {this.props.memories.isFetching}  
-                            keyExtractor={(item, index) => index.toString()}  
-                        />
-                    </ScrollView>
-                    :
-                    <Text style={styles.textNoMemories}>You can add a memory easily with the clipboard, or the "Share Tool", selecting any text in your device and pressing Share with Memories Cloud!</Text>
-                }                
+                </Modal>      
 
                 <DropdownAlert 
                     ref={ref => this.dropdown = ref} 
@@ -413,6 +460,15 @@ const styles = StyleSheet.create({
     memoryModalText: {
         color: 'white'
     },
+    dateSeparatorContainer: {
+        alignItems: 'center',
+        marginBottom: 10
+    }, 
+    dateSeparatorText: {
+        textAlign: 'center',
+        color: 'white',
+        fontWeight: 'bold'
+    }
   });
   
 //mapStateToProps

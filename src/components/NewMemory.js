@@ -31,8 +31,8 @@ class NewMemory extends Component {
             source: '',
             value: '',
             uid: '',
-            saving: false,
             loged: false,
+            loading: true,
             saveDisabled: false
         }    
     }
@@ -43,7 +43,7 @@ class NewMemory extends Component {
         }
     }    
 
-    componentDidMount() {
+    componentWillMount() {
         
         try{
             this.unsubscriber = firebase.auth().onAuthStateChanged((user) => {
@@ -75,7 +75,8 @@ class NewMemory extends Component {
         subValue = String.prototype.substr.call(value,0,MAX_MEMORY_LENGTH)
         this.setState({ 
             value: subValue, 
-            source: 'clipboard' 
+            source: 'clipboard',
+            loading: false
         })
     }
 
@@ -93,14 +94,16 @@ class NewMemory extends Component {
                         source: 'share',
                         type,
                         value: subValue,
-                        loged: true
+                        loged: true,
+                        loading: false
                     })            
                 } catch(error) {
                     console.log(error)
                 }
             } else {
                 this.setState({
-                    uid: ''
+                    uid: '',
+                    loading: false
                 })
             }       
 
@@ -113,7 +116,7 @@ class NewMemory extends Component {
 
     cancel(){
         if(this.state.source == 'clipboard'){
-            this.props.navigation.navigate('Home')
+            this.props.navigation.goBack()
         } else {
             ShareExtension.close()
         }
@@ -122,7 +125,7 @@ class NewMemory extends Component {
     save(){
         this.setState({
             saveDisabled: true,
-            saving: true
+            loading: true
         })
         if(this.state.uid != ''){
             try{
@@ -133,7 +136,12 @@ class NewMemory extends Component {
                 }
                 
                 this.state.value ? FirebaseHelpers.setMemory(this.state.uid, memory) : null                
-                this.cancel()             
+                
+                if(this.state.source == "clipboard"){
+                    this.props.navigation.navigate("Home")
+                } else {
+                    ShareExtension.close()
+                }                          
 
             } catch (error){
                 console.log(error)
@@ -216,7 +224,7 @@ class NewMemory extends Component {
                 </View>
                 }    
 
-                {this.state.saving &&
+                {this.state.loading &&
                     <View style={styles.loading}>
                         <ActivityIndicator style={styles.activityIndicator} size="large" color="white" />   
                     </View>
