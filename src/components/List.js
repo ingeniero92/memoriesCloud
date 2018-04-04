@@ -46,7 +46,9 @@ class List extends Component {
             modalMemoryText: '',
             width,
             height,
-            difDateMessages: []
+            difDateMessages: [],
+            memoriesSize: 0,
+            numberRenders: 0
         }
         this.getUser()
     }
@@ -157,16 +159,40 @@ class List extends Component {
     // Metodos para pintar los recuerdos en la lista
 
     getDifDates(date){
-        var dif = compareDates(date)
-        var difDateMessages = this.state.difDateMessages
-        difDateMessages.push(dif)
-        console.log(this.state.difDateMessages)
+
+        this.state.numberRenders++ 
+        
+        var dif = null        
+
+        // Fix para el bug del doble render de la flatlist
+        this.state.memoriesSize = Object.keys(this.props.memories.memories).length        
+        if(this.state.numberRenders == this.state.memoriesSize + 1){
+            this.state.difDateMessages = []
+            this.state.numberRenders = 1
+        }
+
+        if(this.state.numberRenders <= this.state.memoriesSize){
+            
+            dif = compareDates(date)
+            var difDateMessages = this.state.difDateMessages
+
+            if(difDateMessages.indexOf(dif) == -1){    
+                difDateMessages.push(dif)                      
+            }  else {
+                dif = null
+            }
+
+        }
+       
         return dif
     }
 
     renderItem(item){   
-        const {navigate} = this.props.navigation    
-        var difDates = this.getDifDates(item.date)
+        
+        const {navigate} = this.props.navigation  
+       
+        difDates = this.getDifDates(item.date)
+
         return (
 
             <View>
@@ -232,6 +258,7 @@ class List extends Component {
     }
 
     render(){   
+
         return(            
             <View style={styles.container} onLayout={this._handleLayout}>
             
