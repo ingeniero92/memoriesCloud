@@ -118,7 +118,8 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         color: 'white',
         marginTop: 10,
-        marginBottom: 10
+        marginBottom: 10,
+        textDecorationLine: 'underline'
     },
     image: {
         width: width - 50,
