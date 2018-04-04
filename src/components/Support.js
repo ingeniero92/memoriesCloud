@@ -23,7 +23,7 @@ const {width, height} = Dimensions.get('window')
 class Support extends Component {
 
     sendMail(){
-        Linking.openURL('mailto:memoriescloudapp@gmail.com?subject=Help Memories Cloud&body=versionBETA')
+        Linking.openURL('mailto:memoriescloudapp@gmail.com?subject=Contact Request Memories Cloud [VersionBETA]&body=')
     }
 
     render(){

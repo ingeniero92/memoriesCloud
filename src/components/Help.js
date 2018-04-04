@@ -76,7 +76,8 @@ const styles = StyleSheet.create({
     cancelButton: {
         backgroundColor: 'red',
         paddingVertical: 20,
-        marginBottom: 10
+        marginBottom: 10,
+        marginTop: 10
     },
     titleText: {
       textAlign: 'center',
