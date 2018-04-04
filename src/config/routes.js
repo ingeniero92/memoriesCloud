@@ -5,6 +5,8 @@ import Loading from '../components/Loading'
 import Profile from '../components/Profile'
 import NewMemory from '../components/NewMemory'
 import SendPassword from '../components/SendPassword'
+import Help from '../components/Help'
+import Support from '../components/Support'
 
 const Routes = {
     Home: {
@@ -45,6 +47,18 @@ const Routes = {
     },
     SendPassword: {
 		screen: SendPassword,
+		navigationOptions: ({navigation}) => ({
+			header: false
+		})
+    },
+    Help: {
+		screen: Help,
+		navigationOptions: ({navigation}) => ({
+			header: false
+		})
+    },
+    Support: {
+		screen: Support,
 		navigationOptions: ({navigation}) => ({
 			header: false
 		})

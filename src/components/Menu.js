@@ -7,6 +7,7 @@ import {
     Image,
     ScrollView,
     TouchableWithoutFeedback,
+    TouchableHighlight,
     ActivityIndicator
 } from 'react-native'
 
@@ -96,40 +97,50 @@ class Menu extends Component {
                 </View>
 
                 <ScrollView style={[styles.scrollContainer, {width: (this.props.menuWidth) }]}>
-                    <View style={styles.textWithIcon}>
-                        <View style={styles.withIcon}>
+                    <TouchableHighlight 
+                        onPress={() => navigate('Help')}
+                        underlayColor = '#0088ff'
+                    >
+                        <View style={styles.textWithIcon}>
+                            <View style={styles.withIcon}>
+                                <Icon 
+                                    style={styles.iconWithText}
+                                    name="book"
+                                    color="white"
+                                    size={28}
+                                />
+                                <Text style={styles.text}>Help</Text>
+                            </View>
                             <Icon 
-                                style={styles.iconWithText}
-                                name="book"
+                                style={styles.rightIcon}
+                                name="angle-right"
                                 color="white"
-                                size={28}
+                                size={25}
                             />
-                            <Text style={styles.text}>Help</Text>
                         </View>
-                        <Icon 
-                            style={styles.rightIcon}
-                            name="angle-right"
-                            color="white"
-                            size={25}
-                        />
-                    </View>
-                    <View style={styles.textWithIcon}>
-                        <View style={styles.withIcon}>
-                            <Icon
-                                style={styles.iconWithText}
-                                name="info-circle"
+                    </TouchableHighlight>
+                    <TouchableHighlight 
+                        onPress={() => navigate('Support')}
+                        underlayColor = '#0088ff'
+                    >
+                        <View style={styles.textWithIcon}>
+                            <View style={styles.withIcon}>
+                                <Icon
+                                    style={styles.iconWithText}
+                                    name="info-circle"
+                                    color="white"
+                                    size={28}
+                                />
+                                <Text style={styles.text}>Support</Text>
+                            </View>
+                            <Icon 
+                                style={styles.rightIcon}
+                                name="angle-right"
                                 color="white"
-                                size={28}
+                                size={25}
                             />
-                            <Text style={styles.text}>Support</Text>
                         </View>
-                        <Icon 
-                            style={styles.rightIcon}
-                            name="angle-right"
-                            color="white"
-                            size={25}
-                        />
-                    </View>
+                    </TouchableHighlight>
                 </ScrollView>
 
             </View>
