@@ -200,6 +200,14 @@ export function compareDates(date){
         difString = "+1 year ago"
     }
 
+    if(dif > 730){
+        difString = "+2 years ago"
+    }
+
+    if(dif > 1095){
+        difString = "+3 years ago"
+    }
+
     return difString
 
 }
