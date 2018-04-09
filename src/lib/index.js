@@ -71,33 +71,6 @@ function convertDateToMilliseconds(date){
 
 }
 
-export function compareDates(date){
-    
-    var currentDateMilliseconds = new Date().getTime()
-    var dateMilliseconds = convertDateToMilliseconds(date)
-    var dif = (Math.abs(currentDateMilliseconds - dateMilliseconds))/(1000*60*60*24)
-    var difString
-
-    if(dif > 0){
-        difString = "Today"
-    }
-
-    if(dif > 1){
-        difString = "+1 day ago"
-    }
-
-    if(dif > 7){
-        difString = "+7 days ago"
-    }
-
-    if(dif > 30){
-        difString = "+1 month ago"
-    }
-
-    return difString
-
-}
-
 function compareMemories(a,b){
 
     const dateA = Number(a.date)
@@ -130,4 +103,103 @@ export const getSortedMemoriesFromObject = (object) => {
         return object
     }   
     
+}
+
+export function compareDates(date){
+    
+    var currentDateMilliseconds = new Date().getTime()
+    var dateMilliseconds = convertDateToMilliseconds(date)
+    var dif = (Math.abs(currentDateMilliseconds - dateMilliseconds))/(1000*60*60*24)
+    var difString
+
+    if(dif > 0){
+        difString = "Today"
+    }
+
+    if(dif > 1){
+        difString = "+1 day ago"
+    }
+
+    if(dif > 2){
+        difString = "+2 days ago"
+    }
+
+    if(dif > 3){
+        difString = "+3 days ago"
+    }
+
+    if(dif > 4){
+        difString = "+4 days ago"
+    }
+
+    if(dif > 5){
+        difString = "+5 days ago"
+    }
+
+    if(dif > 6){
+        difString = "+6 days ago"
+    }
+
+    if(dif > 7){
+        difString = "+1 week ago"
+    }
+
+    if(dif > 14){
+        difString = "+2 weeks ago"
+    }
+
+    if(dif > 21){
+        difString = "+3 weeks ago"
+    }
+
+    if(dif > 30){
+        difString = "+1 month ago"
+    }
+
+    if(dif > 60){
+        difString = "+2 months ago"
+    }
+
+    if(dif > 90){
+        difString = "+3 months ago"
+    }
+
+    if(dif > 120){
+        difString = "+4 months ago"
+    }
+
+    if(dif > 150){
+        difString = "+5 months ago"
+    }
+
+    if(dif > 180){
+        difString = "+6 months ago"
+    }
+
+    if(dif > 210){
+        difString = "+7 months ago"
+    }
+
+    if(dif > 240){
+        difString = "+8 months ago"
+    }
+
+    if(dif > 270){
+        difString = "+9 months ago"
+    }
+
+    if(dif > 300){
+        difString = "+10 months ago"
+    }
+
+    if(dif > 330){
+        difString = "+11 months ago"
+    }
+
+    if(dif > 365){
+        difString = "+1 year ago"
+    }
+
+    return difString
+
 }
