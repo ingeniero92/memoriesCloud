@@ -5,7 +5,9 @@ import {
     StyleSheet,
     TextInput,
     TouchableHighlight,
-    Keyboard
+    Keyboard,
+    Dimensions,
+    NetInfo
 } from 'react-native'
 
 import * as firebase from 'firebase'
@@ -43,15 +45,23 @@ class Profile extends Component {
     }
 
     saveForm(){
-        if(this.state.uid){
-            try{
-                this.state.name ? FirebaseHelpers.setUserName(this.state.uid, this.state.name) : null
-                Keyboard.dismiss()
-                this.dropdown.alertWithType('success', 'Sucess', 'User profile changed!')
-            } catch (error){
-                this.dropdown.alertWithType('error', 'Error', error.message)
+
+        NetInfo.isConnected.fetch().then(isConnected => {
+            if(isConnected){
+                if(this.state.uid){
+                    try{
+                        this.state.name ? FirebaseHelpers.setUserName(this.state.uid, this.state.name) : null
+                        Keyboard.dismiss()
+                        this.dropdown.alertWithType('success', 'Sucess', 'User profile changed!')
+                    } catch (error){
+                        this.dropdown.alertWithType('error', 'Error', error.message)
+                    }
+                }      
+            } else {
+                this.dropdown.alertWithType('error', 'Error', 'No Internet. Check your connection.')
             }
-        }       
+        })        
+         
     }
 
     render(){

@@ -7,7 +7,8 @@ import {
     TouchableHighlight,
     Keyboard,
     Image,
-    ActivityIndicator
+    ActivityIndicator,
+    NetInfo
 } from 'react-native'
 
 import * as firebase from 'firebase'
@@ -26,21 +27,30 @@ class SendPassword extends Component {
 
     sendPassword(){
 
-        this.setState({
-            loading: true            
-        })
+        NetInfo.isConnected.fetch().then(isConnected => {
+            if(isConnected){
 
-        const {navigate} = this.props.navigation
-        firebase.auth().sendPasswordResetEmail(this.state.email)
-            .then(() => {
-                navigate("Login", {sendPassword: true})
-            })
-            .catch((error) =>{
                 this.setState({
-                    loading: false            
+                    loading: true            
                 })
-                this.dropdown.alertWithType('error', 'Error', error.message)
-            })     
+        
+                const {navigate} = this.props.navigation
+                firebase.auth().sendPasswordResetEmail(this.state.email)
+                    .then(() => {
+                        navigate("Login", {sendPassword: true})
+                    })
+                    .catch((error) =>{
+                        this.setState({
+                            loading: false            
+                        })
+                        this.dropdown.alertWithType('error', 'Error', error.message)
+                    })  
+                     
+            } else {
+                this.dropdown.alertWithType('error', 'Error', 'No Internet. Check your connection.')
+            }
+        })  
+        
     }
 
     render(){

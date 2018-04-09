@@ -7,7 +7,8 @@ import {
     TouchableHighlight,
     Keyboard,
     Image,
-    ActivityIndicator
+    ActivityIndicator,
+    NetInfo
 } from 'react-native'
 
 import * as firebase from 'firebase'
@@ -29,17 +30,24 @@ class Register extends Component {
 
     signUp(){
 
-        Keyboard.dismiss()
+        NetInfo.isConnected.fetch().then(isConnected => {
+            if(isConnected){
+                
+                Keyboard.dismiss()
 
-        if(this.state.password != this.state.confirmPassword){
-            this.dropdown.alertWithType('error', 'Error', 'Passwords must be equal!');
-        } else {
-            this.setState({
-                loading: true
-            })
-            
-            this.registerUser()
-        }
+                if(this.state.password != this.state.confirmPassword){
+                    this.dropdown.alertWithType('error', 'Error', 'Passwords must be equal!');
+                } else {
+                    this.setState({
+                        loading: true
+                    })
+                    
+                    this.registerUser()
+                } 
+            } else {
+                this.dropdown.alertWithType('error', 'Error', 'No Internet. Check your connection.')
+            }
+        })  
 
     }
 

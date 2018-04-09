@@ -9,7 +9,8 @@ import {
     Image,
     TouchableWithoutFeedback,
     ActivityIndicator,
-    BackHandler
+    BackHandler,
+    NetInfo
 } from 'react-native'
 
 import {connect} from 'react-redux'
@@ -35,16 +36,25 @@ class Login extends Component {
                 this.dropdown.alertWithType('success', 'Reset Password Sent!', "Reset Password Sent! Verify your mail to change the password."); 
             }            
         } catch(error) {
-           
+           console.log(error)
         }        
     }
 
     login(){
-        this.setState({
-            loading: true
-        })
-        Keyboard.dismiss()
-        this.loginUser()
+
+        NetInfo.isConnected.fetch().then(isConnected => {
+            if(isConnected){
+                this.setState({
+                    loading: true
+                })
+                Keyboard.dismiss()
+                this.loginUser()
+            } else {
+                Keyboard.dismiss()
+                this.dropdown.alertWithType('error', 'Error', 'No Internet. Check your connection.')
+            }
+        })  
+
     }
 
     async loginUser(){

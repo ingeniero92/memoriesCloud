@@ -15,7 +15,8 @@ import{
     Clipboard,
     ActivityIndicator,
     AppState,
-    TouchableNativeFeedback
+    TouchableNativeFeedback,
+    NetInfo
 } from 'react-native'
 
 import Modal from "react-native-modal"
@@ -74,7 +75,15 @@ class List extends Component {
     // Metodo para actualizar la lista
 
     updateList(){
-        this.props.fetchMemories(this.state.uid)
+
+        NetInfo.isConnected.fetch().then(isConnected => {
+            if(isConnected){
+                this.props.fetchMemories(this.state.uid)
+            } else {
+                this.dropdown.alertWithType('error', 'Error', 'No Internet. Check your connection.')
+            }
+        })
+        
     }
 
     // Metodo para actualizar las dimensiones actuales del dispositivo (debido a los posibles giros de pantalla)
@@ -138,10 +147,17 @@ class List extends Component {
     // Metodos para borrar recuerdos
 
     deleteMemory(memoryId){      
-        this.toggleModal()
-        FirebaseHelpers.removeMemory(this.state.uid,this.state.modalMemoryId)        
-        this.updateList()
-        //this.dropdown.alertWithType('success', 'Success!', 'Memory Deleted!')   
+        
+        NetInfo.isConnected.fetch().then(isConnected => {
+            this.toggleModal()
+            if(isConnected){                
+                FirebaseHelpers.removeMemory(this.state.uid,this.state.modalMemoryId)        
+                this.updateList() 
+            } else {
+                this.dropdown.alertWithType('error', 'Error', 'No Internet. Check your connection.')
+            }
+        })     
+
     }   
 
     // Metodos para mostrar el modal de borrar recuerdo
@@ -339,7 +355,6 @@ class List extends Component {
 
                 <DropdownAlert 
                     ref={ref => this.dropdown = ref} 
-                    startDelta = {-200}
                     updateStatusBar = {false}
                 /> 
 
@@ -494,7 +509,12 @@ const styles = StyleSheet.create({
     dateSeparatorText: {
         textAlign: 'center',
         color: 'white',
-        fontWeight: 'bold'
+        fontWeight: 'bold',
+        fontSize: 15,
+        backgroundColor: '#32A54A',
+        borderRadius: 15,
+        paddingHorizontal: 10,
+        paddingVertical: 1
     }
   });
   

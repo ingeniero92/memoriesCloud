@@ -4,9 +4,11 @@ import {
     View,
     StyleSheet,
     TouchableWithoutFeedback,
-    Image
+    Image,
+    NetInfo
 } from 'react-native'
 
+import DropdownAlert from 'react-native-dropdownalert'
 import Icon from 'react-native-vector-icons/FontAwesome'
 import * as Animatable from 'react-native-animatable'
 import {connect} from 'react-redux'
@@ -32,8 +34,16 @@ class Header extends Component {
     }
 
     refreshList(){
-        this.refresh.rotate(200)
-        this.props.fetchMemories(this.props.user.user.uid) 
+
+        NetInfo.isConnected.fetch().then(isConnected => {
+            if(isConnected){
+                this.refresh.rotate(200)
+                this.props.fetchMemories(this.props.user.user.uid) 
+            } else {
+                this.dropdown.alertWithType('error', 'Error', 'No Internet. Check your connection.')
+            }
+        })   
+
     }
 
     render(){
@@ -61,6 +71,11 @@ class Header extends Component {
                         />
                     </Animatable.View>
                 </TouchableWithoutFeedback>
+
+                <DropdownAlert 
+                    ref={ref => this.dropdown = ref} 
+                    updateStatusBar = {false}
+                /> 
 
             </View>
         )

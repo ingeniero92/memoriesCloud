@@ -10,11 +10,13 @@ import {
     Clipboard,
     Image,
     Linking,
-    ActivityIndicator
+    ActivityIndicator,
+    NetInfo
 } from 'react-native'
 
 import * as firebase from 'firebase'
 import ShareExtension from 'react-native-share-extension'
+import DropdownAlert from 'react-native-dropdownalert'
 
 import FirebaseHelpers from '../api/firebaseHelpers'
 import {getCurrentDate} from '../lib' 
@@ -48,7 +50,10 @@ class NewMemory extends Component {
         try{
             this.unsubscriber = firebase.auth().onAuthStateChanged((user) => {
                 if(user){
-                    this.setState({ uid: user.uid, loged: true})
+                    this.setState({ 
+                        uid: user.uid, 
+                        loged: true
+                    })
                 }                
             })
         } catch(error){
@@ -123,30 +128,38 @@ class NewMemory extends Component {
     }
 
     save(){
-        this.setState({
-            saveDisabled: true,
-            loading: true
-        })
-        if(this.state.uid != ''){
-            try{
 
-                let memory = {
-                    "text": this.state.value,
-                    "date": getCurrentDate()
-                }
-                
-                this.state.value ? FirebaseHelpers.setMemory(this.state.uid, memory) : null                
-                
-                if(this.state.source == "clipboard"){
-                    this.props.navigation.navigate("Home")
-                } else {
-                    ShareExtension.close()
-                }                          
-
-            } catch (error){
-                console.log(error)
+        NetInfo.isConnected.fetch().then(isConnected => {
+            if(isConnected){
+                this.setState({
+                    saveDisabled: true,
+                    loading: true
+                })
+                if(this.state.uid != ''){
+                    try{
+        
+                        let memory = {
+                            "text": this.state.value,
+                            "date": getCurrentDate()
+                        }
+                        
+                        this.state.value ? FirebaseHelpers.setMemory(this.state.uid, memory) : null                
+                        
+                        if(this.state.source == "clipboard"){
+                            this.props.navigation.navigate("Home")
+                        } else {
+                            ShareExtension.close()
+                        }                          
+        
+                    } catch (error){
+                        console.log(error)
+                    }
+                }      
+            } else {
+                this.dropdown.alertWithType('error', 'Error', 'No Internet. Check your connection.')
             }
-        }       
+        })  
+         
     }
 
     signUp(){
@@ -223,6 +236,11 @@ class NewMemory extends Component {
 
                 </View>
                 }    
+
+                <DropdownAlert 
+                    ref={ref => this.dropdown = ref} 
+                    updateStatusBar = {false}
+                />
 
                 {this.state.loading &&
                     <View style={styles.loading}>

@@ -8,11 +8,13 @@ import {
     ActivityIndicator,
     Dimensions,
     TouchableHighlight,
-    BackHandler
+    BackHandler,
+    NetInfo
 } from 'react-native'
 
 import { StackNavigator, addNavigationHelpers } from 'react-navigation'
 import Modal from "react-native-modal"
+import DropdownAlert from 'react-native-dropdownalert'
 
 import FirebaseHelpers from '../api/firebaseHelpers'
 import firebase from '../api/firebase'
@@ -29,46 +31,72 @@ class Loading extends Component {
             initialView : null,
             userLoaded: false,
             textLoading: 'Loading Memories Cloud...',
-            isModalVisible: false
+            isVersionModalVisible: false,
+            isConnectionModalVisible: false
+        }        
+    }
+
+    handleFirstConnectivityChange = (isConnected) => {
+        if(isConnected){
+            this.setState({ isConnectionModalVisible: false })
+            this.getInitialView()
         }
+      }
+
+    componentWillMount() {
         this.getInitialView()
+        NetInfo.isConnected.addEventListener(
+            'connectionChange',
+            this.handleFirstConnectivityChange
+        )
+    }
+     
+    componentWillUnmount() {
+        NetInfo.isConnected.removeEventListener(
+            'connectionChange',
+            this.handleFirstConnectivityChange
+        )
     }
 
     getInitialView(){
 
         const {navigate} = this.props.navigation
 
-        FirebaseHelpers.getMinVersion( (minVersion) => {      
-            if(minVersion > CURRENT_VERSION){
-                this.setState({
-                    textLoading: 'Loading Request for Update...',
-                    isModalVisible: true
-                })
-            } else {
-                firebase.auth().onAuthStateChanged((user) => {    
-                    if(user){
-                        this.setState({                   
-                            initialView: 'Home',
-                            userLoaded: true,
-                            textLoading: 'Loading Memories List...'
+        NetInfo.isConnected.fetch().then(isConnected => {
+            if(isConnected){
+                FirebaseHelpers.getMinVersion( (minVersion) => {      
+                    if(minVersion > CURRENT_VERSION){
+                        this.setState({
+                            textLoading: 'Loading Request for Update...',
+                            isVersionModalVisible: true
                         })
                     } else {
-                        this.setState({                    
-                            initialView: 'Login',     
-                            userLoaded: false,               
-                            textLoading: 'Loading Register...'
-                        })
-                    }      
-                    setTimeout( () => {
-                        navigate(this.state.initialView)
-                    }, 0)                   
-                })    
-            }                  
-        })   
+                        firebase.auth().onAuthStateChanged((user) => {    
+                            if(user){
+                                this.setState({                   
+                                    initialView: 'Home',
+                                    userLoaded: true,
+                                    textLoading: 'Loading Memories List...'
+                                })
+                            } else {
+                                this.setState({                    
+                                    initialView: 'Login',     
+                                    userLoaded: false,               
+                                    textLoading: 'Loading Register...'
+                                })
+                            }      
+                            setTimeout( () => {
+                                navigate(this.state.initialView)
+                            }, 0)                   
+                        })    
+                    }                  
+                })
+            } else {
+                this.setState({ isConnectionModalVisible: true })            
+            }
+        })           
         
     }
-
-    toggleModal = () => this.setState({ isModalVisible: !this.state.isModalVisible })
 
     exitApp(){
         BackHandler.exitApp()
@@ -84,7 +112,7 @@ class Loading extends Component {
 
                 <Modal 
                     style={styles.modalContainer}                
-                    isVisible={this.state.isModalVisible}
+                    isVisible={this.state.isVersionModalVisible}
                     supportedOrientations={['portrait', 'landscape']}
                     onBackButtonPress={() => this.exitApp()}    
                     animationIn = {'pulse'}  
@@ -108,6 +136,38 @@ class Loading extends Component {
 
                     </View>
                 </Modal>   
+
+                <Modal 
+                    style={styles.modalContainer}                
+                    isVisible={this.state.isConnectionModalVisible}
+                    supportedOrientations={['portrait', 'landscape']}
+                    onBackButtonPress={() => this.exitApp()}    
+                    animationIn = {'pulse'}  
+                    animationInTiming = {600}
+                    hideModalContentWhileAnimating = {true}
+                    backdropOpacity = {0.40}
+                >
+                    <View style={styles.modalBox}>
+                        
+                        <Text style={styles.modalTitle}>No connection</Text>
+
+                        <Text style={styles.modalText}>Sorry, but you data connection to use Memories Cloud. Please, check your connection.</Text>
+
+                        <TouchableHighlight
+                            onPress={() => this.exitApp()}
+                            style={styles.exitButton}
+                            underlayColor = 'red'
+                        >                                       
+                            <Text style={styles.textExitButton}>Exit</Text>
+                        </TouchableHighlight> 
+
+                    </View>
+                </Modal>   
+
+                <DropdownAlert 
+                    ref={ref => this.dropdown = ref} 
+                    updateStatusBar = {false}
+                /> 
 
             </View>
         )
