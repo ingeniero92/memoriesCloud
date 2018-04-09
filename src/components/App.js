@@ -12,9 +12,9 @@ import {
 import SlideMenu from 'react-native-side-menu'
 import {connect} from 'react-redux'
 
-import Header from './components/Header'
-import Menu from './components/Menu'
-import List from './components/List'
+import Header from './Header'
+import Menu from './Menu'
+import List from './List'
 
 class App extends Component{
 

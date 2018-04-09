@@ -1,4 +1,4 @@
-import App from '../app'
+import App from '../components/App'
 import Login from '../components/Login'
 import Register from '../components/Register'
 import Loading from '../components/Loading'
@@ -9,11 +9,11 @@ import Help from '../components/Help'
 import Support from '../components/Support'
 
 const Routes = {
-    Home: {
-        screen: App, 
+    Loading: {
+        screen: Loading,
         navigationOptions: ({navigation}) => ({
             header: false
-          })
+        })
     },
     Login: {
         screen: Login, 
@@ -27,11 +27,17 @@ const Routes = {
             header: false
           })
     },
-    Loading: {
-        screen: Loading,
+    SendPassword: {
+		screen: SendPassword,
+		navigationOptions: ({navigation}) => ({
+			header: false
+		})
+    },
+    Home: {
+        screen: App, 
         navigationOptions: ({navigation}) => ({
             header: false
-        })
+          })
     },
 	Profile: {
 		screen: Profile,
@@ -41,12 +47,6 @@ const Routes = {
     },
     NewMemory: {
 		screen: NewMemory,
-		navigationOptions: ({navigation}) => ({
-			header: false
-		})
-    },
-    SendPassword: {
-		screen: SendPassword,
 		navigationOptions: ({navigation}) => ({
 			header: false
 		})

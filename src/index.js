@@ -9,12 +9,15 @@ import {
     createStore,
     applyMiddleware,
     combineReducers,
+    compose
   } from 'redux';
 
 import { 
     Provider, 
     connect 
 } from 'react-redux'
+
+import thunk from 'redux-thunk';
 
 import {
     createReduxBoundAddListener,
@@ -23,7 +26,7 @@ import {
 
 import BugFreeStackNavigator from './lib/BugFreeStackNavigator'
 import Routes from './config/routes'
-import getStore from './store'
+import getRootReducer from './reducers'
 
 import { YellowBox } from 'react-native';
 import _ from 'lodash';
@@ -53,6 +56,11 @@ const middleware = createReactNavigationReduxMiddleware(
 
 const addListener = createReduxBoundAddListener("root");
 
+const store = createStore(
+    getRootReducer(navReducer),
+    applyMiddleware(thunk),
+);
+
 class App extends Component {
     render(){
         return (
@@ -69,9 +77,7 @@ class App extends Component {
 
 const mapStateToProps = (state) => ({
     nav: state.nav
-  });
-
-const store = getStore(navReducer,middleware);
+ });
 
 const AppIndex = connect(mapStateToProps)(App)
 
