@@ -282,8 +282,8 @@ class List extends Component {
                     <TouchableWithoutFeedback 
                         onPress={() => this.copyMemoryFromClipboard()}
                     >
-                        <View style={styles.copyMemoryFromClipboard}>
-                            <TextInput editable = {false} style={styles.copyMemoryFromClipboardText}>Get memory from clipboard</TextInput>
+                        <View style={styles.copyMemoryFromClipboardButton}>
+                            <Text style={styles.copyMemoryFromClipboardButtonText}>Get memory from clipboard</Text>
                             <Icon 
                                 name="clipboard"
                                 color = "#0088ff"
@@ -308,8 +308,23 @@ class List extends Component {
                         />
                     </ScrollView>
                     :
-                    <Text style={styles.textNoMemories}>You can add a memory easily with the clipboard, or the "Share Tool", selecting any text in your device and pressing Share with Memories Cloud!</Text>
-                }                
+                    <View style={styles.noMemoriesContainer}> 
+                        <Text style={styles.noMemoriesText}>You can add a memory easily with the clipboard, or the "Share Tool", selecting any text in your device and pressing Share with Memories Cloud!</Text>
+                        <TouchableWithoutFeedback 
+                            onPress={() => this.props.navigation.navigate("Help")}
+                        >
+                            <View style={styles.noMemoriesButton}>
+                                <Text style={styles.noMemoriesTextButton}>Yet lost? Get Help!</Text>
+                                <Icon 
+                                    name="book"
+                                    color = "white"
+                                    size = {30}
+                                    style={styles.noMemoriesIcon}
+                                />
+                            </View>                
+                        </TouchableWithoutFeedback>
+                    </View>
+                }              
 
                 <Modal 
                     style={styles.modalContainer}                
@@ -374,24 +389,60 @@ const styles = StyleSheet.create({
     container: {
         flex: 1
     },
+    noMemoriesContainer: {
+        marginTop: 10,
+        alignItems: 'center', 
+    },
+    noMemoriesButton: {
+        flexDirection: 'row',
+        backgroundColor: '#32A54A',
+        borderRadius: 10,
+        paddingHorizontal: 5,
+        paddingVertical: 5
+    },
+    noMemoriesTextButton:{
+        paddingHorizontal: 10,
+        paddingVertical: 10,
+        textAlign: 'center',
+        fontSize: 15,
+        color: 'white',
+        fontWeight: 'bold'
+    },
+    noMemoriesText:{
+        fontSize: 14,
+        color: 'white',
+        fontWeight: 'bold',
+        textAlign: 'center',
+        marginBottom: 15
+    },
+    noMemoriesIcon: {
+        marginTop: 5,
+        marginBottom: 5,
+        marginRight: 10,
+        marginLeft: 5
+    },
     copyMemoryFromClipboardContainer: {
         marginTop: 10,
         alignItems: 'center',
         borderColor: 'rgba(255, 255, 255, .5)',
         borderBottomWidth: 3, 
     },
-    copyMemoryFromClipboard: {
+    copyMemoryFromClipboardButton: {
         flexDirection: 'row',
         backgroundColor: '#fec600',
-        marginBottom: 10
+        marginBottom: 10,
+        paddingHorizontal: 5,
+        paddingVertical: 5
     },
-    copyMemoryFromClipboardText:{
+    copyMemoryFromClipboardButtonText:{
         fontSize: 15,
         color: '#0088ff',
-        fontWeight: 'bold'
+        fontWeight: 'bold',
+        marginTop: 10
     },
     pasteIcon: {
-        marginTop: 10,
+        marginTop: 5,
+        marginBottom: 5,
         marginRight: 5,
         marginLeft: 5
     },

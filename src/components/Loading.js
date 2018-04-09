@@ -151,7 +151,7 @@ class Loading extends Component {
                         
                         <Text style={styles.modalTitle}>No connection</Text>
 
-                        <Text style={styles.modalText}>Sorry, but you data connection to use Memories Cloud. Please, check your connection.</Text>
+                        <Text style={styles.modalText}>Sorry, but you need data connection to use Memories Cloud. Please, check your connection.</Text>
 
                         <TouchableHighlight
                             onPress={() => this.exitApp()}
