@@ -176,18 +176,9 @@ class List extends Component {
 
     // Metodos para pintar los recuerdos en la lista
 
-    getDifDates(date){
-
-        this.state.numberRenders++ 
+    getDifDates(date){        
         
-        var dif = null        
-        
-        // Fix para el bug del doble render de la flatlist
-        this.state.memoriesSize = Object.keys(this.props.memories.memories).length        
-        if(this.state.numberRenders == this.state.memoriesSize){
-            this.state.difDateMessages = []
-            this.state.numberRenders = 0
-        }
+        var dif = null     
 
         if(this.state.numberRenders <= this.state.memoriesSize){
             
@@ -200,6 +191,15 @@ class List extends Component {
                 dif = null
             }
 
+        }
+
+        this.state.numberRenders++ 
+
+        // Fix para el bug del doble render de la flatlist
+        this.state.memoriesSize = Object.keys(this.props.memories.memories).length        
+        if(this.state.numberRenders >= this.state.memoriesSize){
+            this.state.difDateMessages = []
+            this.state.numberRenders = 0
         }
        
         return dif
