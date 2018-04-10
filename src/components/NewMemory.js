@@ -50,28 +50,35 @@ class NewMemory extends Component {
         try{
             this.unsubscriber = firebase.auth().onAuthStateChanged((user) => {
                 if(user){
+
                     this.setState({ 
                         uid: user.uid, 
                         loged: true
                     })
-                }                
+
+                    var source
+                    try{
+                        source = this.props.navigation.state.params.source        
+                    } catch(error) {
+                        source = 'share'
+                    }
+            
+                    if(source == 'clipboard'){
+                        this.copyMemoryFromClipboard();
+                    } else {
+                        this.getShareData()
+                    }
+
+                } else {
+                    this.setState({
+                        loading: false,
+                        loged: false
+                    })
+                }         
             })
         } catch(error){
             console.log(error)
-        }
-
-        var source
-        try{
-            source = this.props.navigation.state.params.source        
-        } catch(error) {
-            source = 'share'
-        }
-
-        if(source == 'clipboard'){
-            this.copyMemoryFromClipboard();
-        } else {
-            this.getShareData()
-        }
+        }       
 
     }
 
@@ -89,9 +96,7 @@ class NewMemory extends Component {
 
         try{
 
-            let user = await firebase.auth().currentUser
-
-            if(user){
+            if(this.state.uid != ''){
                 try {
                     const { type, value } = await ShareExtension.data()
                     var subValue = String.prototype.substr.call(value,0,MAX_MEMORY_LENGTH)
@@ -108,15 +113,15 @@ class NewMemory extends Component {
             } else {
                 this.setState({
                     uid: '',
-                    loading: false
+                    loading: false,
+                    loged: false
                 })
             }       
 
         } catch(error){
             console.log(error)
         }
-        
-        
+                
     }
 
     cancel(){
@@ -172,9 +177,8 @@ class NewMemory extends Component {
             
             <View style={styles.container}>   
             
-                {this.state.loged 
+                {this.state.loged ?
                 
-                ?
                 <View>
 
                     <Text style={styles.titleText}>Save Memory?</Text>
@@ -209,6 +213,11 @@ class NewMemory extends Component {
                 </View>
 
                 :
+                <View></View>
+                }    
+
+                {!this.state.loading && !this.state.loged ?
+
                 <View style={styles.container}>
                     
                     <View style={styles.logoContainer}>
@@ -234,8 +243,13 @@ class NewMemory extends Component {
                         </TouchableHighlight>                   
                     </View>                          
 
-                </View>
-                }    
+                </View>          
+
+                :
+
+                <View></View>
+
+                }
 
                 <DropdownAlert 
                     ref={ref => this.dropdown = ref} 

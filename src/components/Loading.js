@@ -40,8 +40,8 @@ class Loading extends Component {
         if(isConnected){
             this.setState({ isConnectionModalVisible: false })
             this.getInitialView()
-        }
-      }
+        } 
+    }
 
     componentWillMount() {
         this.getInitialView()

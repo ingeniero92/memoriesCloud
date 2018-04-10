@@ -108,7 +108,9 @@ class List extends Component {
     _handleAppStateChange = (nextAppState) => {
         if (this.state.appState.match(/inactive|background/) && nextAppState === 'active') {
             try {
-                this.updateList()
+                console.log(this.state.appState)
+                console.log(nextAppState)
+                //this.updateList()
             } catch(error){
                 console.log(error)
             }            
