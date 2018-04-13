@@ -77,7 +77,7 @@ class Profile extends Component {
                         selectionColor="#449DEF"
                         underlineColorAndroid='transparent'
                         placeholderTextColor="grey"
-                        placeholder = "Nombre"
+                        placeholder = "Name"
                         value = {this.state.name}
                         onChangeText = {(name) => this.setState({name})}
                     />

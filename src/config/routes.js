@@ -4,6 +4,7 @@ import Register from '../components/Register'
 import Loading from '../components/Loading'
 import Profile from '../components/Profile'
 import NewMemory from '../components/NewMemory'
+import Share from '../components/Share'
 import SendPassword from '../components/SendPassword'
 import Help from '../components/Help'
 import Support from '../components/Support'
@@ -47,6 +48,12 @@ const Routes = {
     },
     NewMemory: {
 		screen: NewMemory,
+		navigationOptions: ({navigation}) => ({
+			header: false
+		})
+    },
+    Share: {
+		screen: Share,
 		navigationOptions: ({navigation}) => ({
 			header: false
 		})

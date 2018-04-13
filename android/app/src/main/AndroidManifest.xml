@@ -39,7 +39,6 @@
         android:name=".share.ShareActivity"
         android:configChanges="orientation"
         android:label="@string/title_activity_share"
-        android:screenOrientation="portrait"
         android:theme="@style/AppTheme">
         <intent-filter>
             <action android:name="android.intent.action.SEND" />

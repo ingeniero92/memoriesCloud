@@ -10,5 +10,6 @@ export const FETCHING_USER = "FETCHING_USER";
 export const FETCHING_USER_SUCCESS = "FETCHING_USER_SUCCESS";
 export const FETCHING_USER_ERROR = "FETCHING_USER_ERROR";
 
-export const CURRENT_VERSION = 0;
+export const CURRENT_VERSION = 1;
 export const MAX_MEMORY_LENGTH = 300;
+export const MAX_TITLE_LENGTH = 50;

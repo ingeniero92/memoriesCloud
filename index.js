@@ -1,7 +1,7 @@
 import { AppRegistry } from 'react-native'
 
 import IndexApp from './src/'
-import NewMemory from './src/components/NewMemory'
+import Share from './src/components/Share'
 
 AppRegistry.registerComponent('memoriesCloud', () => IndexApp);
-AppRegistry.registerComponent('Share', () => NewMemory);
+AppRegistry.registerComponent('Share', () => Share);

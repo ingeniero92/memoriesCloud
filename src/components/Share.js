@@ -21,7 +21,7 @@ import DropdownAlert from 'react-native-dropdownalert'
 import FirebaseHelpers from '../api/firebaseHelpers'
 import {getCurrentDate} from '../lib' 
 
-import {MAX_MEMORY_LENGTH} from '../constants'
+import {MAX_MEMORY_LENGTH, MAX_TITLE_LENGTH} from '../constants'
 
 const {width, height} = Dimensions.get('window')
 
@@ -30,13 +30,25 @@ class NewMemory extends Component {
     constructor(props){        
         super(props)
         this.state = {
-            source: '',
+            type: '',
             value: '',
+            title: '',
             uid: '',
-            loged: false,
+            loged: true,
             loading: true,
-            saveDisabled: false
+            saveDisabled: false,
+            width,
+            height
         }    
+    }
+
+    // Metodo para actualizar las dimensiones actuales del dispositivo (debido a los posibles giros de pantalla)
+
+    _handleLayout = event => {
+        this.setState({
+            width: Dimensions.get('window').width,
+            height: Dimensions.get('window').height
+        })
     }
 
     componentWillUnmount() {
@@ -55,19 +67,8 @@ class NewMemory extends Component {
                         uid: user.uid, 
                         loged: true
                     })
-
-                    var source
-                    try{
-                        source = this.props.navigation.state.params.source        
-                    } catch(error) {
-                        source = 'share'
-                    }
-            
-                    if(source == 'clipboard'){
-                        this.copyMemoryFromClipboard();
-                    } else {
-                        this.getShareData()
-                    }
+                        
+                    this.getShareData()                    
 
                 } else {
                     this.setState({
@@ -82,16 +83,6 @@ class NewMemory extends Component {
 
     }
 
-    async copyMemoryFromClipboard(){
-        var value = await Clipboard.getString() 
-        subValue = String.prototype.substr.call(value,0,MAX_MEMORY_LENGTH)
-        this.setState({ 
-            value: subValue, 
-            source: 'clipboard',
-            loading: false
-        })
-    }
-
     async getShareData() {
 
         try{
@@ -101,7 +92,6 @@ class NewMemory extends Component {
                     const { type, value } = await ShareExtension.data()
                     var subValue = String.prototype.substr.call(value,0,MAX_MEMORY_LENGTH)
                     this.setState({
-                        source: 'share',
                         type,
                         value: subValue,
                         loged: true,
@@ -124,44 +114,42 @@ class NewMemory extends Component {
                 
     }
 
-    cancel(){
-        if(this.state.source == 'clipboard'){
-            this.props.navigation.goBack()
-        } else {
-            ShareExtension.close()
-        }
-    }
-
     save(){
 
         NetInfo.isConnected.fetch().then(isConnected => {
             if(isConnected){
                 this.setState({
-                    saveDisabled: true,
-                    loading: true
+                    saveDisabled: true
                 })
                 if(this.state.uid != ''){
-                    try{
-        
-                        let memory = {
-                            "text": this.state.value,
-                            "date": getCurrentDate()
+                    if(this.state.uid != ''){
+                        try{
+            
+                            let memory = {
+                                "text": this.state.value,
+                                "title": this.state.title,
+                                "date": getCurrentDate()
+                            }
+                            
+                            this.state.value ? FirebaseHelpers.setMemory(this.state.uid, memory) : null              
+                        
+                            ShareExtension.close()                        
+                        
+                        } catch (error){
+                            console.log(error)
                         }
-                        
-                        this.state.value ? FirebaseHelpers.setMemory(this.state.uid, memory) : null                
-                        
-                        if(this.state.source == "clipboard"){
-                            this.props.navigation.navigate("Home")
-                        } else {
-                            ShareExtension.close()
-                        }                          
-        
-                    } catch (error){
-                        console.log(error)
-                    }
+                    } else {
+                        this.dropdown.alertWithType('error', 'Error', 'The memory can not be empty.')
+                        this.setState({
+                            saveDisabled: false
+                        })
+                    }    
                 }      
             } else {
                 this.dropdown.alertWithType('error', 'Error', 'No Internet. Check your connection.')
+                this.setState({
+                    saveDisabled: false
+                })
             }
         })  
          
@@ -175,20 +163,38 @@ class NewMemory extends Component {
     render(){     
         return (
             
-            <View style={styles.container}>   
-            
+            <View style={styles.container} onLayout={this._handleLayout}>     
+
                 {this.state.loged ?
-                
+
                 <View>
 
-                    <Text style={styles.titleText}>Save Memory?</Text>
+                    <Text style={styles.titleText}>Save Memory</Text>
+
+                    <TextInput 
+                        editable = {true} 
+                        selectionColor="#449DEF"
+                        underlineColorAndroid='transparent'
+                        placeholderTextColor="white"
+                        placeholder = "Title"
+                        style={[styles.memoryTitleText, { width: this.state.width - 30}]}
+                        value = {this.state.title}
+                        onChangeText = {(title) => this.setState({title})}
+                        maxLength = {MAX_TITLE_LENGTH}
+                    />
 
                     <View style={styles.memoryTextContainer}>
                         <ScrollView horizontal>
                             <TextInput 
-                                editable = {false} 
-                                style={styles.memoryText}
+                                editable = {true} 
+                                selectionColor="#449DEF"
+                                underlineColorAndroid='transparent'
+                                placeholderTextColor="grey"
+                                placeholder = "Memory"
+                                style={[styles.memoryText, { width: this.state.width - 30}]}
                                 value = {this.state.value}
+                                onChangeText = {(value) => this.setState({value})}
+                                maxLength = {MAX_MEMORY_LENGTH}
                             />
                         </ScrollView>  
                     </View>
@@ -203,22 +209,18 @@ class NewMemory extends Component {
                     </TouchableHighlight>  
 
                     <TouchableHighlight
-                        onPress={() => this.cancel()}
+                        onPress={() => ShareExtension.close()}
                         style={styles.backButton}
                         underlayColor = 'red'
                     >                                       
                         <Text style={styles.textBackButton}>Discard</Text>
-                    </TouchableHighlight> 
-                    
-                </View>
+                    </TouchableHighlight>    
+
+                </View>   
 
                 :
-                <View></View>
-                }    
 
-                {!this.state.loading && !this.state.loged ?
-
-                <View style={styles.container}>
+                <View>
                     
                     <View style={styles.logoContainer}>
                         <Image style={styles.logo} source={require('../images/logo.png')}/>
@@ -235,7 +237,7 @@ class NewMemory extends Component {
                         </TouchableHighlight>     
                         
                         <TouchableHighlight
-                            onPress={ () => this.cancel()}
+                            onPress={ () => ShareExtension.close()}
                             style={styles.backButton}
                             underlayColor = 'red'
                         >                                       
@@ -243,24 +245,14 @@ class NewMemory extends Component {
                         </TouchableHighlight>                   
                     </View>                          
 
-                </View>          
-
-                :
-
-                <View></View>
-
-                }
+                </View>  
+                
+                } 
 
                 <DropdownAlert 
                     ref={ref => this.dropdown = ref} 
                     updateStatusBar = {false}
                 />
-
-                {this.state.loading &&
-                    <View style={styles.loading}>
-                        <ActivityIndicator style={styles.activityIndicator} size="large" color="white" />   
-                    </View>
-                }   
 
             </View>
         )
@@ -295,11 +287,6 @@ const styles = StyleSheet.create({
         color: 'white',
         fontWeight: 'bold'
     },
-    memoryContainer: {
-        flex: 1,
-        justifyContent: 'center',
-        marginBottom: 10
-    },
     memoryTextContainer: {
         borderWidth: 1,
         borderColor: 'white',
@@ -309,6 +296,15 @@ const styles = StyleSheet.create({
     },
     memoryText: {
         color: '#0088ff'
+    },
+    memoryTitleText: {
+        color: 'white',
+        textAlign: 'center',
+        marginBottom: 20,
+        fontSize: 18,
+        fontWeight: 'bold',
+        borderColor: 'rgba(255, 255, 255, .5)',
+        borderBottomWidth: 2
     },
     titleText: {
       textAlign: 'center',
@@ -352,18 +348,7 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         color: 'white',
         fontWeight: 'bold'
-    },
-    loading: {
-        position: 'absolute',
-        left: 0,
-        right: 0,
-        top: 0,
-        bottom: 0,
-        opacity: 0.5,
-        backgroundColor: 'black',
-        justifyContent: 'center',
-        alignItems: 'center'
-    },
+    }
 })
 
 export default NewMemory

@@ -103,8 +103,10 @@ class NewMemory extends Component {
 
                         } else {
                             this.dropdown.alertWithType('error', 'Error', 'The memory can not be empty.')
-                        }
-                                             
+                            this.setState({
+                                saveDisabled: false
+                            })
+                        }                                             
         
                     } catch (error){
                         console.log(error)
@@ -112,6 +114,9 @@ class NewMemory extends Component {
                 }      
             } else {
                 this.dropdown.alertWithType('error', 'Error', 'No Internet. Check your connection.')
+                this.setState({
+                    saveDisabled: false
+                })
             }
         })  
          
@@ -146,6 +151,7 @@ class NewMemory extends Component {
                             style={[styles.memoryText, { width: this.state.width - 30}]}
                             value = {this.state.value}
                             onChangeText = {(value) => this.setState({value})}
+                            maxLength = {MAX_MEMORY_LENGTH}
                         />
                     </ScrollView>  
                 </View>

@@ -225,6 +225,8 @@ class List extends Component {
        
         difDates = this.getDifDates(item.date)
 
+        {item.title ? marginTopIcons = 30 : marginTopIcons = 10}        
+
         return (
 
             <View>
@@ -241,7 +243,7 @@ class List extends Component {
 
                 <View style={[styles.memoryContainer, { width: this.state.width}]}>                                 
 
-                    <View style={[styles.memoryTextContainer, { width: this.state.width - (30*3 + 40) }]}>
+                    <View style={[styles.memoryTextContainer, { width: this.state.width - (30*3 + 55) }]}>
                         {item.title &&
                             <TextInput editable = {false} style={styles.memoryTitle}>{item.title}</TextInput>
                         }                        
@@ -250,14 +252,14 @@ class List extends Component {
                         </ScrollView>            
                     </View>
 
-                    <View style={[styles.memoryIconsContainer, {width: 30*3 + 10}]}>
+                    <View style={[styles.memoryIconsContainer, {marginTop: marginTopIcons}]}>
                         <TouchableWithoutFeedback 
                             onPress={() => this.onShare(item.text)}
                         >
                             <Icon 
                                 name="share-alt-square"
                                 color = "white"
-                                size = {20}
+                                size = {25}
                                 style={styles.memoryIcon}
                             />
                         </TouchableWithoutFeedback>
@@ -268,7 +270,7 @@ class List extends Component {
                             <Icon 
                                 name="copy"
                                 color = "white"
-                                size = {20}
+                                size = {25}
                                 style={styles.memoryIcon}
                             />
                         </TouchableWithoutFeedback>
@@ -279,7 +281,7 @@ class List extends Component {
                             <Icon 
                                 name="trash"
                                 color = "#d80404"
-                                size = {20}
+                                size = {25}
                                 style={styles.memoryIcon}
                             />
                         </TouchableWithoutFeedback>
@@ -465,17 +467,15 @@ const styles = StyleSheet.create({
     buttonsContainer: {        
         flexDirection: 'row',
         justifyContent: 'center',
-        marginTop: 10,
+        marginTop: 15,
         alignItems: 'center',
-        borderColor: 'rgba(255, 255, 255, .5)',
-        borderBottomWidth: 3, 
     },
     newMemoryButton: {        
         backgroundColor: '#32A54A',
         marginBottom: 10,
         marginRight: 10,
         paddingHorizontal: 7,
-        paddingVertical: 5,
+        paddingVertical: 3.5,
         borderRadius: 200
     },
     copyMemoryFromClipboardButton: {
@@ -491,7 +491,7 @@ const styles = StyleSheet.create({
         fontSize: 15,
         color: '#0088ff',
         fontWeight: 'bold',
-        marginTop: 10
+        marginTop: 7
     },
     plusIcon: {
         marginTop: 5,
@@ -500,7 +500,7 @@ const styles = StyleSheet.create({
         marginLeft: 5
     },
     pasteIcon: {
-        marginTop: 5,
+        marginTop: 6,
         marginBottom: 5,
         marginRight: 5,
         marginLeft: 5
@@ -525,19 +525,19 @@ const styles = StyleSheet.create({
     memoryIconsContainer:{
         flexDirection: 'row',
         justifyContent: 'center',
-        marginTop: 10
+        width: 30*3 + 25
     },
     memoryTitle: {
         color: '#0088ff',
-        fontSize: 20,
+        fontSize: 15,
         fontWeight: 'bold',
         borderColor: '#0088ff',
-        borderBottomWidth: 3,
+        borderBottomWidth: 2,
         height: 40
     },
     memoryText: {
         color: '#0088ff',
-        height: 40
+        height: 41
     },
     memoryIcon: {
         marginRight: 5,

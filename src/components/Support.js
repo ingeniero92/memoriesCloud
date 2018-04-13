@@ -23,7 +23,7 @@ const {width, height} = Dimensions.get('window')
 class Support extends Component {
 
     sendMail(){
-        Linking.openURL('mailto:memoriescloudapp@gmail.com?subject=Contact Request Memories Cloud [VersionBETA]&body=')
+        Linking.openURL('mailto:memoriescloudapp@gmail.com?subject=Contact Request Memories Cloud [Version 1.0.]&body=')
     }
 
     render(){
@@ -38,7 +38,7 @@ class Support extends Component {
                     <ScrollView contentContainerStyle={{flexGrow: 1, justifyContent : 'center'}}>
                         <View style={styles.scrollSupport}>
                             <Image style={styles.logo} source={require('../images/logo.png')}/>
-                            <Text style={styles.textVersion}>Version BETA</Text>
+                            <Text style={styles.textVersion}>Version 1.0.</Text>
                             <Text style={styles.textAuthor}>José Serrano Álvarez</Text>
                             <Text style={styles.textAuthor}>David de los Santos Gil</Text>
                             <TouchableWithoutFeedback onPress={ () => this.sendMail()}>
