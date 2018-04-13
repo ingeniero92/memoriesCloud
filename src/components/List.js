@@ -32,6 +32,8 @@ import FirebaseHelpers from '../api/firebaseHelpers'
 import { fetchMemories } from '../actions/memoriesActions'
 import { fetchUser } from '../actions/userActions'
 
+import {MAX_MEMORY_LENGTH} from '../constants'
+
 const {width, height} = Dimensions.get('window')
 
 class List extends Component {
@@ -95,7 +97,7 @@ class List extends Component {
         })
     }
     
-    // Metodos para cargar la lista al volver desde el background
+    // Metodos para cargar la lista al volver desde el background (deshabilitado)
 
     componentDidMount() {
         AppState.addEventListener('change', this._handleAppStateChange);
@@ -108,8 +110,6 @@ class List extends Component {
     _handleAppStateChange = (nextAppState) => {
         if (this.state.appState.match(/inactive|background/) && nextAppState === 'active') {
             try {
-                console.log(this.state.appState)
-                console.log(nextAppState)
                 //this.updateList()
             } catch(error){
                 console.log(error)
@@ -134,16 +134,30 @@ class List extends Component {
         })
     }
 
+    // Metodos para crear recuerdos
+
+    newMemory(){
+        const {navigate} = this.props.navigation
+        navigate('NewMemory')
+    }
+
     // Metodos para usar el portapapeles
+
+    async copyMemoryFromClipboard(){
+        var value = await Clipboard.getString() 
+        subValue = String.prototype.substr.call(value,0,MAX_MEMORY_LENGTH)
+        return subValue
+    }
 
     copyToClipboard(text) {
         Clipboard.setString(text);
         this.dropdown.alertWithType('success', 'Text copied to clipboard:', text)
     }
 
-    copyMemoryFromClipboard(){        
+    async newMemoryFromClipboard(){        
         const {navigate} = this.props.navigation
-        navigate('NewMemory', {source: 'clipboard'})
+        var value = await this.copyMemoryFromClipboard()
+        navigate('NewMemory', {source: 'clipboard',value})
     }
 
     // Metodos para borrar recuerdos
@@ -162,7 +176,7 @@ class List extends Component {
 
     }   
 
-    // Metodos para mostrar el modal de borrar recuerdo
+    // Metodos para mostrar el modal
 
     showDeleteModal(text,memoryId){
         this.setState({
@@ -195,7 +209,7 @@ class List extends Component {
 
         this.state.numberRenders++ 
 
-        // Fix para el bug del doble render de la flatlist
+        // Fix para el bug del multiple render de la flatlist
         this.state.memoriesSize = Object.keys(this.props.memories.memories).length        
         if(this.state.numberRenders >= this.state.memoriesSize){
             this.state.difDateMessages = []
@@ -228,7 +242,10 @@ class List extends Component {
                 <View style={[styles.memoryContainer, { width: this.state.width}]}>                                 
 
                     <View style={[styles.memoryTextContainer, { width: this.state.width - (30*3 + 40) }]}>
-                        <ScrollView horizontal>
+                        {item.title &&
+                            <TextInput editable = {false} style={styles.memoryTitle}>{item.title}</TextInput>
+                        }                        
+                        <ScrollView style={styles.memoryTextScrollView} horizontal>     
                             <TextInput editable = {false} style={styles.memoryText}>{item.text}</TextInput>
                         </ScrollView>            
                     </View>
@@ -280,21 +297,37 @@ class List extends Component {
         return(            
             <View style={styles.container} onLayout={this._handleLayout}>
             
-                <View style={styles.copyMemoryFromClipboardContainer}> 
+                {/* Botones New y Copy From Clipboard */}
+
+                <View style={styles.buttonsContainer}> 
                     <TouchableWithoutFeedback 
-                        onPress={() => this.copyMemoryFromClipboard()}
+                        onPress={() => this.newMemory()}
+                    >
+                        <View style={styles.newMemoryButton}>                            
+                            <Icon 
+                                name="plus"
+                                color = "white"
+                                size = {25}
+                                style={styles.plusIcon}
+                            />
+                        </View>                
+                    </TouchableWithoutFeedback>
+                    <TouchableWithoutFeedback 
+                        onPress={() => this.newMemoryFromClipboard()}
                     >
                         <View style={styles.copyMemoryFromClipboardButton}>
                             <Text style={styles.copyMemoryFromClipboardButtonText}>Get memory from clipboard</Text>
                             <Icon 
                                 name="clipboard"
                                 color = "#0088ff"
-                                size = {30}
+                                size = {25}
                                 style={styles.pasteIcon}
                             />
                         </View>                
                     </TouchableWithoutFeedback>
                 </View>
+
+                {/* Lista de Recuerdos */}
 
                 <Text style={styles.titleText}>My saved Memories:</Text>
 
@@ -326,7 +359,9 @@ class List extends Component {
                             </View>                
                         </TouchableWithoutFeedback>
                     </View>
-                }              
+                }       
+
+                {/* Modal de info de recuerdo*/}       
 
                 <Modal 
                     style={styles.modalContainer}                
@@ -370,10 +405,14 @@ class List extends Component {
                     </View>
                 </Modal>      
 
+                {/* Dropdownalert */}
+
                 <DropdownAlert 
                     ref={ref => this.dropdown = ref} 
                     updateStatusBar = {false}
                 /> 
+
+                {/* Loading */}
 
                 {this.props.memories.isFetching &&
                     <View style={styles.loading}>
@@ -423,24 +462,42 @@ const styles = StyleSheet.create({
         marginRight: 10,
         marginLeft: 5
     },
-    copyMemoryFromClipboardContainer: {
+    buttonsContainer: {        
+        flexDirection: 'row',
+        justifyContent: 'center',
         marginTop: 10,
         alignItems: 'center',
         borderColor: 'rgba(255, 255, 255, .5)',
         borderBottomWidth: 3, 
     },
+    newMemoryButton: {        
+        backgroundColor: '#32A54A',
+        marginBottom: 10,
+        marginRight: 10,
+        paddingHorizontal: 7,
+        paddingVertical: 5,
+        borderRadius: 200
+    },
     copyMemoryFromClipboardButton: {
         flexDirection: 'row',
         backgroundColor: '#fec600',
+        marginLeft: 10,
         marginBottom: 10,
         paddingHorizontal: 5,
-        paddingVertical: 5
+        paddingVertical: 5,
+        borderRadius: 10
     },
     copyMemoryFromClipboardButtonText:{
         fontSize: 15,
         color: '#0088ff',
         fontWeight: 'bold',
         marginTop: 10
+    },
+    plusIcon: {
+        marginTop: 5,
+        marginBottom: 5,
+        marginRight: 5,
+        marginLeft: 5
     },
     pasteIcon: {
         marginTop: 5,
@@ -450,26 +507,37 @@ const styles = StyleSheet.create({
     },
     memoriesContainer: {
         paddingHorizontal: 20,
-        paddingVertical: 0,
+        paddingVertical: 10,
     },
     memoryContainer: {
         flex: 1,        
         flexDirection: 'row',
-        marginBottom: 10,
+        marginBottom: 15,
     },
     memoryTextContainer: {
         borderWidth: 1,
         borderColor: 'white',
         borderRadius: 10,
-        backgroundColor: 'white'
+        backgroundColor: 'white',
+    },
+    memoryTextScrollView: {
     },
     memoryIconsContainer:{
         flexDirection: 'row',
         justifyContent: 'center',
-        marginTop: 15
+        marginTop: 10
+    },
+    memoryTitle: {
+        color: '#0088ff',
+        fontSize: 20,
+        fontWeight: 'bold',
+        borderColor: '#0088ff',
+        borderBottomWidth: 3,
+        height: 40
     },
     memoryText: {
-        color: '#0088ff'
+        color: '#0088ff',
+        height: 40
     },
     memoryIcon: {
         marginRight: 5,
@@ -478,7 +546,6 @@ const styles = StyleSheet.create({
     titleText: {
       textAlign: 'center',
       color: 'white',
-      marginBottom: 10,
       fontSize: 25,
       fontWeight: 'bold',
       borderColor: 'rgba(255, 255, 255, .5)',

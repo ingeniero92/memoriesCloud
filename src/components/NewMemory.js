@@ -32,105 +32,52 @@ class NewMemory extends Component {
         this.state = {
             source: '',
             value: '',
+            title: '',
             uid: '',
-            loged: false,
-            loading: true,
-            saveDisabled: false
+            saveDisabled: false,
+            width,
+            height
         }    
-    }
-
-    componentWillUnmount() {
-        if (this.unsubscriber) {
-            this.unsubscriber();
-        }
-    }    
+    }  
 
     componentWillMount() {
-        
-        try{
-            this.unsubscriber = firebase.auth().onAuthStateChanged((user) => {
-                if(user){
 
-                    this.setState({ 
-                        uid: user.uid, 
-                        loged: true
-                    })
+        try {
+            firebase.auth().onAuthStateChanged((user) => {             
+                if(user){     
 
+                    this.setState({     
+                        uid: user.uid
+                    }) 
+                    
                     var source
                     try{
-                        source = this.props.navigation.state.params.source        
+                        source = this.props.navigation.state.params.source       
+                        this.setState({
+                            value: this.props.navigation.state.params.value 
+                        }) 
                     } catch(error) {
-                        source = 'share'
-                    }
-            
-                    if(source == 'clipboard'){
-                        this.copyMemoryFromClipboard();
-                    } else {
-                        this.getShareData()
-                    }
+                        source = 'new'
+                    }   
 
-                } else {
-                    this.setState({
-                        loading: false,
-                        loged: false
-                    })
-                }         
-            })
-        } catch(error){
+                }                             
+            })        
+        } catch (error){
             console.log(error)
-        }       
-
+        }             
+          
     }
 
-    async copyMemoryFromClipboard(){
-        var value = await Clipboard.getString() 
-        subValue = String.prototype.substr.call(value,0,MAX_MEMORY_LENGTH)
-        this.setState({ 
-            value: subValue, 
-            source: 'clipboard',
-            loading: false
+    // Metodo para actualizar las dimensiones actuales del dispositivo (debido a los posibles giros de pantalla)
+
+    _handleLayout = event => {
+        this.setState({
+            width: Dimensions.get('window').width,
+            height: Dimensions.get('window').height
         })
     }
 
-    async getShareData() {
-
-        try{
-
-            if(this.state.uid != ''){
-                try {
-                    const { type, value } = await ShareExtension.data()
-                    var subValue = String.prototype.substr.call(value,0,MAX_MEMORY_LENGTH)
-                    this.setState({
-                        source: 'share',
-                        type,
-                        value: subValue,
-                        loged: true,
-                        loading: false
-                    })            
-                } catch(error) {
-                    console.log(error)
-                }
-            } else {
-                this.setState({
-                    uid: '',
-                    loading: false,
-                    loged: false
-                })
-            }       
-
-        } catch(error){
-            console.log(error)
-        }
-                
-    }
-
-    cancel(){
-        if(this.state.source == 'clipboard'){
-            this.props.navigation.goBack()
-        } else {
-            ShareExtension.close()
-        }
-    }
+    // Metodo para guardar los recuerdos
 
     save(){
 
@@ -138,23 +85,26 @@ class NewMemory extends Component {
             if(isConnected){
                 this.setState({
                     saveDisabled: true,
-                    loading: true
                 })
                 if(this.state.uid != ''){
-                    try{
-        
-                        let memory = {
-                            "text": this.state.value,
-                            "date": getCurrentDate()
-                        }
+                    try{      
                         
-                        this.state.value ? FirebaseHelpers.setMemory(this.state.uid, memory) : null                
-                        
-                        if(this.state.source == "clipboard"){
-                            this.props.navigation.navigate("Home")
+                        if(this.state.value != ''){
+
+                            let memory = {
+                                "text": this.state.value,
+                                "title": this.state.title,
+                                "date": getCurrentDate()
+                            }
+
+                            this.state.value ? FirebaseHelpers.setMemory(this.state.uid, memory) : null                
+                            
+                            this.props.navigation.navigate("Home")  
+
                         } else {
-                            ShareExtension.close()
-                        }                          
+                            this.dropdown.alertWithType('error', 'Error', 'The memory can not be empty.')
+                        }
+                                             
         
                     } catch (error){
                         console.log(error)
@@ -167,100 +117,60 @@ class NewMemory extends Component {
          
     }
 
-    signUp(){
-        ShareExtension.close()
-        Linking.openURL('com.memoriescloud://').catch(error => console.error(error));
-    }
-
     render(){     
         return (
             
-            <View style={styles.container}>   
-            
-                {this.state.loged ?
-                
-                <View>
+            <View style={styles.container} onLayout={this._handleLayout}>          
 
-                    <Text style={styles.titleText}>Save Memory?</Text>
+                <Text style={styles.titleText}>Save Memory</Text>
 
-                    <View style={styles.memoryTextContainer}>
-                        <ScrollView horizontal>
-                            <TextInput 
-                                editable = {false} 
-                                style={styles.memoryText}
-                                value = {this.state.value}
-                            />
-                        </ScrollView>  
-                    </View>
+                <TextInput 
+                    editable = {true} 
+                    selectionColor="#449DEF"
+                    underlineColorAndroid='transparent'
+                    placeholderTextColor="white"
+                    placeholder = "Title"
+                    style={[styles.memoryTitleText, { width: this.state.width - 30}]}
+                    value = {this.state.title}
+                    onChangeText = {(title) => this.setState({title})}
+                />
 
-                    <TouchableHighlight
-                        onPress={() => this.save()}
-                        style={styles.saveButton}
-                        underlayColor = '#fec600'
-                        disabled = {this.state.saveDisabled}
-                    >                                       
-                        <Text style={styles.textSaveButton}>Save</Text>
-                    </TouchableHighlight>  
-
-                    <TouchableHighlight
-                        onPress={() => this.cancel()}
-                        style={styles.backButton}
-                        underlayColor = 'red'
-                    >                                       
-                        <Text style={styles.textBackButton}>Discard</Text>
-                    </TouchableHighlight> 
-                    
+                <View style={styles.memoryTextContainer}>
+                    <ScrollView horizontal>
+                        <TextInput 
+                            editable = {true} 
+                            selectionColor="#449DEF"
+                            underlineColorAndroid='transparent'
+                            placeholderTextColor="grey"
+                            placeholder = "Memory"
+                            style={[styles.memoryText, { width: this.state.width - 30}]}
+                            value = {this.state.value}
+                            onChangeText = {(value) => this.setState({value})}
+                        />
+                    </ScrollView>  
                 </View>
 
-                :
-                <View></View>
-                }    
+                <TouchableHighlight
+                    onPress={() => this.save()}
+                    style={styles.saveButton}
+                    underlayColor = '#fec600'
+                    disabled = {this.state.saveDisabled}
+                >                                       
+                    <Text style={styles.textSaveButton}>Save</Text>
+                </TouchableHighlight>  
 
-                {!this.state.loading && !this.state.loged ?
-
-                <View style={styles.container}>
-                    
-                    <View style={styles.logoContainer}>
-                        <Image style={styles.logo} source={require('../images/logo.png')}/>
-                        <Text style={styles.text}>You need a loged account in Memories Cloud to save your data, login or register now free!</Text>
-                    </View>    
-
-                    <View style={styles.buttonContainer}>
-                        <TouchableHighlight
-                            onPress = {() => this.signUp()}
-                            style={styles.registerButton}
-                            underlayColor = '#32A54A'
-                        > 
-                            <Text style={styles.textRegisterButton}>Register free account!</Text>
-                        </TouchableHighlight>     
-                        
-                        <TouchableHighlight
-                            onPress={ () => this.cancel()}
-                            style={styles.backButton}
-                            underlayColor = 'red'
-                        >                                       
-                            <Text style={styles.textBackButton}>Exit</Text>
-                        </TouchableHighlight>                   
-                    </View>                          
-
-                </View>          
-
-                :
-
-                <View></View>
-
-                }
+                <TouchableHighlight
+                    onPress={() => this.props.navigation.goBack()}
+                    style={styles.backButton}
+                    underlayColor = 'red'
+                >                                       
+                    <Text style={styles.textBackButton}>Discard</Text>
+                </TouchableHighlight>             
 
                 <DropdownAlert 
                     ref={ref => this.dropdown = ref} 
                     updateStatusBar = {false}
-                />
-
-                {this.state.loading &&
-                    <View style={styles.loading}>
-                        <ActivityIndicator style={styles.activityIndicator} size="large" color="white" />   
-                    </View>
-                }   
+                /> 
 
             </View>
         )
@@ -308,7 +218,16 @@ const styles = StyleSheet.create({
         marginBottom: 10
     },
     memoryText: {
-        color: '#0088ff'
+        color: '#0088ff',
+    },
+    memoryTitleText: {
+        color: 'white',
+        textAlign: 'center',
+        marginBottom: 20,
+        fontSize: 18,
+        fontWeight: 'bold',
+        borderColor: 'rgba(255, 255, 255, .5)',
+        borderBottomWidth: 2
     },
     titleText: {
       textAlign: 'center',
@@ -318,52 +237,7 @@ const styles = StyleSheet.create({
       fontWeight: 'bold',
       borderColor: 'rgba(255, 255, 255, .5)',
       borderBottomWidth: 3
-    },
-    text: {
-        color: 'white',
-        textAlign: 'center'
-    },
-    logoContainer: {
-        alignItems: 'center',
-        marginBottom: 10
-    },
-    logo: {
-        alignItems: 'center',
-        width: 250,
-        height: 100,
-        marginBottom: 10
-    },
-    registerButton:{
-        backgroundColor: '#32A54A',
-        paddingVertical: 20,
-        marginBottom: 10
-    },
-    backButton:{
-        backgroundColor: 'red',
-        paddingVertical: 20,
-        marginBottom: 10
-    },
-    textRegisterButton: {
-       textAlign: 'center',
-       color: 'white',
-       fontWeight: 'bold'
-    },
-    textBackButton: {
-        textAlign: 'center',
-        color: 'white',
-        fontWeight: 'bold'
-    },
-    loading: {
-        position: 'absolute',
-        left: 0,
-        right: 0,
-        top: 0,
-        bottom: 0,
-        opacity: 0.5,
-        backgroundColor: 'black',
-        justifyContent: 'center',
-        alignItems: 'center'
-    },
+    }   
 })
 
 export default NewMemory

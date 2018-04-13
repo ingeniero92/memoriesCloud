@@ -88,7 +88,7 @@ function compareMemories(a,b){
 
 export const getArrayFromObject = (object) => {
     const objectArray = Object.keys(object).map(key => 
-        item = {key: key, date: object[key].date, text: object[key].text}
+        item = {key: key, date: object[key].date, text: object[key].text, title: object[key].title}
     )
     return objectArray
 }
