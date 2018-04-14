@@ -14,6 +14,13 @@ class FirebaseHelpers {
         ref.push(memory)
     }
 
+    static editMemory(userId, memoryId, memoryTitle, memoryText){
+        let memoryTitlePath = "/user/" + userId + "/memories/" + memoryId + "/title"
+        let memoryTextPath = "/user/" + userId + "/memories/" + memoryId + "/text"
+        firebase.database().ref(memoryTitlePath).set(memoryTitle)
+        firebase.database().ref(memoryTextPath).set(memoryText)
+    }
+
     static removeMemory(userId, memoryId){
         let userNamePath = "/user/" + userId + "/memories/" + memoryId
         var ref = firebase.database().ref(userNamePath)

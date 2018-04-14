@@ -32,7 +32,7 @@ import FirebaseHelpers from '../api/firebaseHelpers'
 import { fetchMemories } from '../actions/memoriesActions'
 import { fetchUser } from '../actions/userActions'
 
-import {MAX_MEMORY_LENGTH} from '../constants'
+import {MAX_MEMORY_LENGTH, MAX_TITLE_LENGTH} from '../constants'
 
 const {width, height} = Dimensions.get('window')
 
@@ -47,6 +47,7 @@ class List extends Component {
             isModalVisible: false,
             modalMemoryId: '',
             modalMemoryText: '',
+            modalMemoryTitle: '',
             width,
             height,
             difDateMessages: [],
@@ -160,9 +161,27 @@ class List extends Component {
         navigate('NewMemory', {source: 'clipboard',value})
     }
 
-    // Metodos para borrar recuerdos
+    // Metodos para editar y borrar recuerdos
 
-    deleteMemory(memoryId){      
+    saveMemory(){      
+        
+        NetInfo.isConnected.fetch().then(isConnected => {
+            this.toggleModal()
+            if(isConnected){                
+                if(this.state.modalMemoryText != ''){
+                    FirebaseHelpers.editMemory(this.state.uid,this.state.modalMemoryId,this.state.modalMemoryTitle,this.state.modalMemoryText)        
+                    this.updateList() 
+                } else {
+                    this.dropdown.alertWithType('error', 'Error', 'The memory can not be empty.')
+                }
+            } else {
+                this.dropdown.alertWithType('error', 'Error', 'No Internet. Check your connection.')
+            }
+        })     
+
+    }   
+
+    deleteMemory(){      
         
         NetInfo.isConnected.fetch().then(isConnected => {
             this.toggleModal()
@@ -178,10 +197,11 @@ class List extends Component {
 
     // Metodos para mostrar el modal
 
-    showDeleteModal(text,memoryId){
+    showDeleteModal(memoryId,title,text){
         this.setState({
             modalMemoryId: memoryId,
-            modalMemoryText: text
+            modalMemoryTitle: title,
+            modalMemoryText: text            
         })
         this.toggleModal()
     }
@@ -276,11 +296,11 @@ class List extends Component {
                         </TouchableWithoutFeedback>
                         
                         <TouchableWithoutFeedback                         
-                            onPress={() => this.showDeleteModal(item.text,item.key)}
+                            onPress={() => this.showDeleteModal(item.key,item.title,item.text)}
                         >
                             <Icon 
-                                name="trash"
-                                color = "#d80404"
+                                name="edit"
+                                color = "white"
                                 size = {25}
                                 style={styles.memoryIcon}
                             />
@@ -380,29 +400,51 @@ class List extends Component {
                 >
                     <View style={styles.modalBox}>
                         
-                        <Text style={styles.modalTitle}>Delete Memory?</Text>
+                        <Text style={styles.modalTitle}>Edit Memory</Text>
+
+                        <TextInput 
+                            editable = {true} 
+                            selectionColor="#449DEF"
+                            underlineColorAndroid='transparent'
+                            placeholderTextColor="#0088ff"
+                            placeholder = "Title"
+                            style={styles.memoryModalTitle}
+                            value = {this.state.modalMemoryTitle}
+                            onChangeText = {(modalMemoryTitle) => this.setState({modalMemoryTitle})}
+                            maxLength = {MAX_TITLE_LENGTH}
+                        />
 
                         <View style={styles.memoryTextModal}>
                             <ScrollView horizontal>
-                                <TextInput editable = {false} style={styles.memoryModalText}>{this.state.modalMemoryText}</TextInput>
+                                <TextInput 
+                                    editable = {true} 
+                                    selectionColor="#449DEF"
+                                    underlineColorAndroid='transparent'
+                                    placeholderTextColor="white"
+                                    placeholder = "Memory"
+                                    style={styles.memoryModalText}
+                                    value = {this.state.modalMemoryText}
+                                    onChangeText = {(modalMemoryText) => this.setState({modalMemoryText})}
+                                    maxLength = {MAX_MEMORY_LENGTH}
+                                />                            
                             </ScrollView>  
                         </View>
+
+                        <TouchableHighlight
+                            onPress={() => this.saveMemory()}
+                            style={styles.backButton}
+                            underlayColor = '#fec600'
+                        >                                       
+                            <Text style={styles.textBackButton}>Save changes</Text>
+                        </TouchableHighlight> 
 
                         <TouchableHighlight
                             onPress={() => this.deleteMemory()}
                             style={styles.deleteButton}
                             underlayColor = 'red'
                         >                                       
-                            <Text style={styles.textDeleteButton}>Delete</Text>
-                        </TouchableHighlight>  
-
-                        <TouchableHighlight
-                            onPress={() => this.toggleModal()}
-                            style={styles.backButton}
-                            underlayColor = '#fec600'
-                        >                                       
-                            <Text style={styles.textBackButton}>Back</Text>
-                        </TouchableHighlight> 
+                            <Text style={styles.textDeleteButton}>Delete Memory</Text>
+                        </TouchableHighlight>                          
 
                     </View>
                 </Modal>      
@@ -449,17 +491,20 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         fontSize: 15,
         color: 'white',
-        fontWeight: 'bold'
+        fontWeight: 'bold',
+        marginBottom: 1
     },
     noMemoriesText:{
         fontSize: 14,
         color: 'white',
         fontWeight: 'bold',
         textAlign: 'center',
-        marginBottom: 15
+        marginBottom: 15,
+        paddingHorizontal: 10,
+        paddingVertical: 10
     },
     noMemoriesIcon: {
-        marginTop: 5,
+        marginTop: 6,
         marginBottom: 5,
         marginRight: 10,
         marginLeft: 5
@@ -573,7 +618,7 @@ const styles = StyleSheet.create({
     modalBox: {        
         backgroundColor: 'white',
         width: width - 60,
-        height: 280,
+        height: 320,
         borderRadius: 5,
         paddingVertical: 10,
         paddingHorizontal: 10
@@ -584,20 +629,19 @@ const styles = StyleSheet.create({
     modalTitle: {
       textAlign: 'center',
       color: '#0088ff',
-      marginBottom: 10,
       fontSize: 25,
       fontWeight: 'bold',
       borderColor: '#0088ff',
       borderBottomWidth: 3,
-      marginBottom: 10,
-      paddingVertical: 10
-    },
-    backButton:{
-        backgroundColor: '#fec600',
-        paddingVertical: 20
+      marginBottom: 5,
+      marginTop: 5
     },
     deleteButton:{
         backgroundColor: 'red',
+        paddingVertical: 20
+    },
+    backButton:{
+        backgroundColor: '#fec600',
         paddingVertical: 20,
         marginBottom: 10
     },
@@ -620,7 +664,17 @@ const styles = StyleSheet.create({
         height: 50
     },
     memoryModalText: {
+        width: width - 90,
         color: 'white'
+    },
+    memoryModalTitle: {
+        textAlign: 'center',
+        color: '#0088ff',
+        fontSize: 15,
+        borderColor: '#0088ff',
+        borderBottomWidth: 2,
+        marginBottom: 10,
+        paddingVertical: 10
     },
     dateSeparatorContainer: {
         alignItems: 'center',

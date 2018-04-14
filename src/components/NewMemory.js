@@ -21,7 +21,7 @@ import DropdownAlert from 'react-native-dropdownalert'
 import FirebaseHelpers from '../api/firebaseHelpers'
 import {getCurrentDate} from '../lib' 
 
-import {MAX_MEMORY_LENGTH} from '../constants'
+import {MAX_MEMORY_LENGTH, MAX_TITLE_LENGTH} from '../constants'
 
 const {width, height} = Dimensions.get('window')
 
@@ -138,6 +138,7 @@ class NewMemory extends Component {
                     style={[styles.memoryTitleText, { width: this.state.width - 30}]}
                     value = {this.state.title}
                     onChangeText = {(title) => this.setState({title})}
+                    maxLength = {MAX_TITLE_LENGTH}
                 />
 
                 <View style={styles.memoryTextContainer}>
