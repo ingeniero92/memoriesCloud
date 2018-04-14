@@ -11,7 +11,8 @@ import {
     Image,
     Linking,
     ActivityIndicator,
-    NetInfo
+    NetInfo,
+    Keyboard
 } from 'react-native'
 
 import * as firebase from 'firebase'
@@ -132,7 +133,7 @@ class NewMemory extends Component {
                             }
                             
                             this.state.value ? FirebaseHelpers.setMemory(this.state.uid, memory) : null              
-                        
+                            Keyboard.dismiss()
                             ShareExtension.close()                        
                         
                         } catch (error){
@@ -183,21 +184,17 @@ class NewMemory extends Component {
                         maxLength = {MAX_TITLE_LENGTH}
                     />
 
-                    <View style={styles.memoryTextContainer}>
-                        <ScrollView horizontal>
-                            <TextInput 
-                                editable = {true} 
-                                selectionColor="#449DEF"
-                                underlineColorAndroid='transparent'
-                                placeholderTextColor="grey"
-                                placeholder = "Memory"
-                                style={[styles.memoryText, { width: this.state.width - 30}]}
-                                value = {this.state.value}
-                                onChangeText = {(value) => this.setState({value})}
-                                maxLength = {MAX_MEMORY_LENGTH}
-                            />
-                        </ScrollView>  
-                    </View>
+                    <TextInput 
+                        editable = {true} 
+                        selectionColor="#449DEF"
+                        underlineColorAndroid='transparent'
+                        placeholderTextColor="grey"
+                        placeholder = "Memory"
+                        style={[styles.memoryTextContainer, { width: this.state.width - 20}]}
+                        value = {this.state.value}
+                        onChangeText = {(value) => this.setState({value})}
+                        maxLength = {MAX_MEMORY_LENGTH}
+                    />
 
                     <TouchableHighlight
                         onPress={() => this.save()}
@@ -224,7 +221,7 @@ class NewMemory extends Component {
                     
                     <View style={styles.logoContainer}>
                         <Image style={styles.logo} source={require('../images/logo.png')}/>
-                        <Text style={styles.text}>You need a loged account in Memories Cloud to save your data, login or register now free!</Text>
+                        <Text style={styles.text}>You need a loged account in Memories Cloud to save your data, login or register now free.</Text>
                     </View>    
 
                     <View style={styles.buttonContainer}>
@@ -288,14 +285,12 @@ const styles = StyleSheet.create({
         fontWeight: 'bold'
     },
     memoryTextContainer: {
+        color: '#0088ff',
         borderWidth: 1,
         borderColor: 'white',
         borderRadius: 10,
         backgroundColor: 'white',
         marginBottom: 10
-    },
-    memoryText: {
-        color: '#0088ff'
     },
     memoryTitleText: {
         color: 'white',

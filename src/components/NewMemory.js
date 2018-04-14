@@ -11,7 +11,8 @@ import {
     Image,
     Linking,
     ActivityIndicator,
-    NetInfo
+    NetInfo,
+    Keyboard
 } from 'react-native'
 
 import * as firebase from 'firebase'
@@ -98,7 +99,7 @@ class NewMemory extends Component {
                             }
 
                             this.state.value ? FirebaseHelpers.setMemory(this.state.uid, memory) : null                
-                            
+                            Keyboard.dismiss()
                             this.props.navigation.navigate("Home")  
 
                         } else {
@@ -140,22 +141,18 @@ class NewMemory extends Component {
                     onChangeText = {(title) => this.setState({title})}
                     maxLength = {MAX_TITLE_LENGTH}
                 />
-
-                <View style={styles.memoryTextContainer}>
-                    <ScrollView horizontal>
-                        <TextInput 
-                            editable = {true} 
-                            selectionColor="#449DEF"
-                            underlineColorAndroid='transparent'
-                            placeholderTextColor="grey"
-                            placeholder = "Memory"
-                            style={[styles.memoryText, { width: this.state.width - 30}]}
-                            value = {this.state.value}
-                            onChangeText = {(value) => this.setState({value})}
-                            maxLength = {MAX_MEMORY_LENGTH}
-                        />
-                    </ScrollView>  
-                </View>
+                
+                <TextInput 
+                    editable = {true} 
+                    selectionColor="#449DEF"
+                    underlineColorAndroid='transparent'
+                    placeholderTextColor="grey"
+                    placeholder = "Memory"
+                    style={[styles.memoryTextContainer, { width: this.state.width - 20}]}
+                    value = {this.state.value}
+                    onChangeText = {(value) => this.setState({value})}
+                    maxLength = {MAX_MEMORY_LENGTH}
+                />   
 
                 <TouchableHighlight
                     onPress={() => this.save()}
@@ -218,14 +215,12 @@ const styles = StyleSheet.create({
         marginBottom: 10
     },
     memoryTextContainer: {
+        color: '#0088ff',
         borderWidth: 1,
         borderColor: 'white',
         borderRadius: 10,
         backgroundColor: 'white',
         marginBottom: 10
-    },
-    memoryText: {
-        color: '#0088ff',
     },
     memoryTitleText: {
         color: 'white',
@@ -234,7 +229,7 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: 'bold',
         borderColor: 'rgba(255, 255, 255, .5)',
-        borderBottomWidth: 2
+        borderBottomWidth: 2,
     },
     titleText: {
       textAlign: 'center',

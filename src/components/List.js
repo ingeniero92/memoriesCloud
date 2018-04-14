@@ -264,7 +264,7 @@ class List extends Component {
                 <View style={[styles.memoryContainer, { width: this.state.width}]}>                                 
 
                     <View style={[styles.memoryTextContainer, { width: this.state.width - (30*3 + 55) }]}>
-                        {item.title &&
+                        {item.title && 
                             <TextInput editable = {false} style={styles.memoryTitle}>{item.title}</TextInput>
                         }                        
                         <ScrollView style={styles.memoryTextScrollView} horizontal>     
@@ -366,7 +366,7 @@ class List extends Component {
                     </ScrollView>
                     :
                     <View style={styles.noMemoriesContainer}> 
-                        <Text style={styles.noMemoriesText}>You can add a memory easily with the clipboard, or the "Share Tool", selecting any text in your device and pressing Share with Memories Cloud!</Text>
+                        <Text style={styles.noMemoriesText}>You can add a memory easily with the clipboard, or the "Share Tool", selecting any text in your device and pressing Share with Memories Cloud.</Text>
                         <TouchableWithoutFeedback 
                             onPress={() => this.props.navigation.navigate("Help")}
                         >
@@ -520,7 +520,7 @@ const styles = StyleSheet.create({
         marginBottom: 10,
         marginRight: 10,
         paddingHorizontal: 7,
-        paddingVertical: 3.5,
+        paddingVertical: 3,
         borderRadius: 200
     },
     copyMemoryFromClipboardButton: {
@@ -539,7 +539,7 @@ const styles = StyleSheet.create({
         marginTop: 7
     },
     plusIcon: {
-        marginTop: 5,
+        marginTop: 6,
         marginBottom: 5,
         marginRight: 5,
         marginLeft: 5

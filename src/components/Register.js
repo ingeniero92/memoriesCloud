@@ -82,7 +82,7 @@ class Register extends Component {
                 
                 <View style={styles.logoContainer}>
                     <Image style={styles.logo} source={require('../images/logo.png')}/>
-                    <Text style={styles.text}>Fill your data to register free!</Text>
+                    <Text style={styles.text}>Fill your data to register free</Text>
                 </View>                
 
                 <View style={styles.inputsContainer}>
