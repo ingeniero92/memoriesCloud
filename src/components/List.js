@@ -414,21 +414,17 @@ class List extends Component {
                             maxLength = {MAX_TITLE_LENGTH}
                         />
 
-                        <View style={styles.memoryTextModal}>
-                            <ScrollView horizontal>
-                                <TextInput 
-                                    editable = {true} 
-                                    selectionColor="#449DEF"
-                                    underlineColorAndroid='transparent'
-                                    placeholderTextColor="white"
-                                    placeholder = "Memory"
-                                    style={styles.memoryModalText}
-                                    value = {this.state.modalMemoryText}
-                                    onChangeText = {(modalMemoryText) => this.setState({modalMemoryText})}
-                                    maxLength = {MAX_MEMORY_LENGTH}
-                                />                            
-                            </ScrollView>  
-                        </View>
+                        <TextInput 
+                            editable = {true} 
+                            selectionColor="rgba(255, 255, 255, .5)"
+                            underlineColorAndroid='transparent'
+                            placeholderTextColor="white"
+                            placeholder = "Memory"
+                            style={styles.memoryTextModal}
+                            value = {this.state.modalMemoryText}
+                            onChangeText = {(modalMemoryText) => this.setState({modalMemoryText})}
+                            maxLength = {MAX_MEMORY_LENGTH}
+                        />     
 
                         <TouchableHighlight
                             onPress={() => this.saveMemory()}
@@ -565,8 +561,6 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         backgroundColor: 'white',
     },
-    memoryTextScrollView: {
-    },
     memoryIconsContainer:{
         flexDirection: 'row',
         justifyContent: 'center',
@@ -656,16 +650,13 @@ const styles = StyleSheet.create({
         fontWeight: 'bold'
     },
     memoryTextModal: {
+        color: 'white',
         borderWidth: 1,
         borderColor: 'white',
         borderRadius: 10,
         backgroundColor: '#0088ff',
         marginBottom: 10,
         height: 50
-    },
-    memoryModalText: {
-        width: width - 90,
-        color: 'white'
     },
     memoryModalTitle: {
         textAlign: 'center',
