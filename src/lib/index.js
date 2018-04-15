@@ -117,7 +117,7 @@ export function compareDates(date){
     }
 
     if(dif > 1){
-        difString = "+1 day ago"
+        difString = "Yesterday"
     }
 
     if(dif > 2){

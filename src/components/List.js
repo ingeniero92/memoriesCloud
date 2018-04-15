@@ -534,7 +534,7 @@ const styles = StyleSheet.create({
         fontSize: 15,
         color: '#0088ff',
         fontWeight: 'bold',
-        marginTop: 7
+        marginTop: 8
     },
     plusIcon: {
         marginTop: 6,
@@ -549,8 +549,7 @@ const styles = StyleSheet.create({
         marginLeft: 5
     },
     memoriesContainer: {
-        paddingHorizontal: 20,
-        paddingVertical: 10,
+        paddingHorizontal: 20
     },
     memoryContainer: {
         flex: 1,        
@@ -614,7 +613,6 @@ const styles = StyleSheet.create({
     modalBox: {        
         backgroundColor: 'white',
         width: width - 60,
-        height: 320,
         borderRadius: 5,
         paddingVertical: 10,
         paddingHorizontal: 10
@@ -629,8 +627,7 @@ const styles = StyleSheet.create({
       fontWeight: 'bold',
       borderColor: '#0088ff',
       borderBottomWidth: 3,
-      marginBottom: 5,
-      marginTop: 5
+      marginBottom: 5
     },
     deleteButton:{
         backgroundColor: 'red',
@@ -671,7 +668,8 @@ const styles = StyleSheet.create({
     },
     dateSeparatorContainer: {
         alignItems: 'center',
-        marginBottom: 10
+        marginBottom: 10,
+        marginTop: 10
     }, 
     dateSeparatorText: {
         textAlign: 'center',
