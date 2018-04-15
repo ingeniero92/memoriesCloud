@@ -245,7 +245,9 @@ class List extends Component {
        
         difDates = this.getDifDates(item.date)
 
-        {item.title ? marginTopIcons = 30 : marginTopIcons = 10}        
+        var marginTopIcons = 10
+
+        {item.title ? marginTopIcons = 30 : item.title = null}       
 
         return (
 
