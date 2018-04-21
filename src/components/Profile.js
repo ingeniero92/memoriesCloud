@@ -4,7 +4,7 @@ import {
     View,
     StyleSheet,
     TextInput,
-    TouchableHighlight,
+    TouchableOpacity,
     Keyboard,
     Dimensions,
     NetInfo
@@ -83,21 +83,21 @@ class Profile extends Component {
                     />
                 </View>               
 
-                <TouchableHighlight
+                <TouchableOpacity
                     style={styles.saveButton}
                     onPress = {this.saveForm.bind(this)}
-                    underlayColor = '#fec600'
+                    activeOpacity = {0.9}
                 > 
                     <Text style={styles.textSaveButton}>Save</Text>
-                </TouchableHighlight>
+                </TouchableOpacity>
 
-                <TouchableHighlight
+                <TouchableOpacity
                     onPress={ () => goBack()}
                     style={styles.cancelButton}
-                    underlayColor = 'red'
+                    activeOpacity = {0.9}
                 >                                       
                     <Text style={styles.textCancelButton}>Back to Home</Text>
-                </TouchableHighlight> 
+                </TouchableOpacity> 
 
                 <DropdownAlert 
                     ref={ref => this.dropdown = ref} 

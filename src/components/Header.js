@@ -3,7 +3,7 @@ import {
     Text,
     View,
     StyleSheet,
-    TouchableWithoutFeedback,
+    TouchableOpacity,
     Image,
     NetInfo
 } from 'react-native'
@@ -50,7 +50,10 @@ class Header extends Component {
         return(
             <View style = {styles.container}>
             
-                <TouchableWithoutFeedback onPress = { () => this.toggleMenu()}>
+                <TouchableOpacity 
+                    onPress = { () => this.toggleMenu()}
+                    activeOpacity = {0.9}
+                >
                     <Animatable.View ref={this.handleMenuView}>
                         <Icon
                             name = "bars"
@@ -58,11 +61,14 @@ class Header extends Component {
                             size = {25}
                         />
                     </Animatable.View>
-                </TouchableWithoutFeedback>
+                </TouchableOpacity>
 
                 <Image style={styles.logo} source={require('../images/logo.png')}/>
 
-                <TouchableWithoutFeedback onPress = { () => this.refreshList()}>
+                <TouchableOpacity 
+                    onPress = { () => this.refreshList()}
+                    activeOpacity = {0.9}
+                >
                     <Animatable.View ref={this.handleRefreshView}>
                         <Icon 
                             name="refresh"
@@ -70,7 +76,7 @@ class Header extends Component {
                             size={25}
                         />
                     </Animatable.View>
-                </TouchableWithoutFeedback>
+                </TouchableOpacity>
 
                 <DropdownAlert 
                     ref={ref => this.dropdown = ref} 

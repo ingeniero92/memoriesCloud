@@ -4,13 +4,12 @@ import {
     View,
     StyleSheet,
     TextInput,
-    TouchableHighlight,
+    TouchableOpacity,
     Keyboard,
     ScrollView,
     Image,
     Dimensions,
-    Linking,
-    TouchableWithoutFeedback
+    Linking
 } from 'react-native'
 
 import * as firebase from 'firebase'
@@ -41,22 +40,25 @@ class Support extends Component {
                             <Text style={styles.textVersion}>Version 1.0.</Text>
                             <Text style={styles.textAuthor}>José Serrano Álvarez</Text>
                             <Text style={styles.textAuthor}>David de los Santos Gil</Text>
-                            <TouchableWithoutFeedback onPress={ () => this.sendMail()}>
+                            <TouchableOpacity 
+                                onPress={ () => this.sendMail()}
+                                activeOpacity = {0.9}
+                            >
                                 <View>
                                   <Text style={styles.textMail}>memoriescloudapp@gmail.com</Text>
                                 </View>                            
-                            </TouchableWithoutFeedback>
+                            </TouchableOpacity>
                         </View>
                     </ScrollView>
                 </View>                                         
 
-                <TouchableHighlight
+                <TouchableOpacity
                     onPress={ () => goBack()}
                     style={styles.cancelButton}
-                    underlayColor = 'red'
+                    activeOpacity = {0.9}
                 >                                       
                     <Text style={styles.textCancelButton}>Back to Home</Text>
-                </TouchableHighlight>                 
+                </TouchableOpacity>                 
 
             </View>
         )

@@ -4,7 +4,7 @@ import {
     View,
     StyleSheet,
     TextInput,
-    TouchableHighlight,
+    TouchableOpacity,
     Keyboard,
     Image,
     ActivityIndicator,
@@ -36,7 +36,7 @@ class Register extends Component {
                 Keyboard.dismiss()
 
                 if(this.state.password != this.state.confirmPassword){
-                    this.dropdown.alertWithType('error', 'Error', 'Passwords must be equal!');
+                    this.dropdown.alertWithType('error', 'Error', 'Passwords must be equal!')
                 } else {
                     this.setState({
                         loading: true
@@ -67,7 +67,7 @@ class Register extends Component {
                 loading: false,
                 response: error.toString()
             })
-            this.dropdown.alertWithType('error', 'Error', error.message);
+            this.dropdown.alertWithType('error', 'Error', error.message)
         }
         
     }
@@ -120,21 +120,21 @@ class Register extends Component {
                 </View>  
 
                 <View style={styles.buttonContainer}>
-                    <TouchableHighlight
+                    <TouchableOpacity
                         onPress = {this.signUp}
                         style={styles.registerButton}
-                        underlayColor = '#fec600'
+                        activeOpacity = {0.9}
                     > 
                         <Text style={styles.textRegisterButton}>Register account!</Text>
-                    </TouchableHighlight>
+                    </TouchableOpacity>
 
-                    <TouchableHighlight
+                    <TouchableOpacity
                         onPress={ () => goBack()}
                         style={styles.backButton}
-                        underlayColor = 'red'
+                        activeOpacity = {0.9}
                     >                                       
                         <Text style={styles.textBackButton}>Back to Login</Text>
-                    </TouchableHighlight>   
+                    </TouchableOpacity>   
                 </View>   
 
                 <DropdownAlert 

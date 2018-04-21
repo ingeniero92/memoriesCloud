@@ -4,10 +4,9 @@ import {
     View,
     StyleSheet,
     TextInput,
-    TouchableHighlight,
+    TouchableOpacity,
     Keyboard,
     Image,
-    TouchableWithoutFeedback,
     ActivityIndicator,
     BackHandler,
     NetInfo
@@ -132,31 +131,32 @@ class Login extends Component {
                 </View>  
 
                 <View style={styles.forgottenPasswordContainer}>
-                    <TouchableWithoutFeedback
+                    <TouchableOpacity
                         onPress={() => navigate('SendPassword')}
+                        activeOpacity = {0.9}
                     >
                         <View>
                             <Text style={styles.sendPasswordText}>Forgotten Password?</Text>
                         </View>
-                    </TouchableWithoutFeedback>                    
+                    </TouchableOpacity>                    
                 </View>  
 
                 <View style={styles.buttonContainer}>
-                    <TouchableHighlight
+                    <TouchableOpacity
                         onPress = {() => this.login()}
                         style={styles.loginButton}
-                        underlayColor = '#fec600'
+                        activeOpacity = {0.9}
                     > 
                         <Text style={styles.textLoginButton}>Login</Text>
-                    </TouchableHighlight>
+                    </TouchableOpacity>
 
-                    <TouchableHighlight
+                    <TouchableOpacity
                         onPress={() => navigate('Register')}
                         style={styles.registerButton}
-                        underlayColor = '#32A54A'
+                        activeOpacity = {0.9}
                     >                                       
                         <Text style={styles.textRegisterButton}>Register free!</Text>
-                    </TouchableHighlight>   
+                    </TouchableOpacity>   
                 </View>      
 
                 <DropdownAlert 

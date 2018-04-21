@@ -4,7 +4,7 @@ import {
     View,
     StyleSheet,
     TextInput,
-    TouchableHighlight,
+    TouchableOpacity,
     Keyboard,
     Image,
     ActivityIndicator,
@@ -79,21 +79,21 @@ class SendPassword extends Component {
                 </View>  
 
                 <View style={styles.buttonContainer}>
-                    <TouchableHighlight
+                    <TouchableOpacity
                         onPress = { () => this.sendPassword()}
                         style={styles.sendPasswordButton}
-                        underlayColor = '#fec600'
+                        activeOpacity = {0.9}
                     > 
                         <Text style={styles.textSendButton}>Send reset password</Text>
-                    </TouchableHighlight>
+                    </TouchableOpacity>
 
-                    <TouchableHighlight
+                    <TouchableOpacity
                         onPress={ () => goBack()}
                         style={styles.backButton}
-                        underlayColor = 'red'
+                        activeOpacity = {0.9}
                     >                                       
                         <Text style={styles.textBackButton}>Back</Text>
-                    </TouchableHighlight>   
+                    </TouchableOpacity>   
                 </View> 
 
                 <DropdownAlert 

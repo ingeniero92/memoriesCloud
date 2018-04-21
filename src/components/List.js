@@ -5,8 +5,7 @@ import{
     StyleSheet,
     FlatList,
     Image,
-    TouchableWithoutFeedback,
-    TouchableHighlight,
+    TouchableOpacity,
     ScrollView,
     Alert,
     TextInput,
@@ -101,11 +100,11 @@ class List extends Component {
     // Metodos para cargar la lista al volver desde el background (deshabilitado)
 
     componentDidMount() {
-        AppState.addEventListener('change', this._handleAppStateChange);
+        AppState.addEventListener('change', this._handleAppStateChange)
     }
     
     componentWillUnmount() {
-        AppState.removeEventListener('change', this._handleAppStateChange);
+        AppState.removeEventListener('change', this._handleAppStateChange)
     }
     
     _handleAppStateChange = (nextAppState) => {
@@ -116,7 +115,7 @@ class List extends Component {
                 console.log(error)
             }            
         }
-        this.setState({appState: nextAppState});
+        this.setState({appState: nextAppState})
     }
 
     // Metodo para compartir recuerdos
@@ -151,7 +150,7 @@ class List extends Component {
     }
 
     copyToClipboard(text) {
-        Clipboard.setString(text);
+        Clipboard.setString(text)
         this.dropdown.alertWithType('success', 'Text copied to clipboard:', text)
     }
 
@@ -210,13 +209,19 @@ class List extends Component {
 
     // Metodos para pintar los recuerdos en la lista
 
-    getDifDates(date){        
-        
+    getDifDates(item){        
+
+        // Fix para el bug del multiple render de la flatlist (cuando el render se reinicia)
+        if(this.state.numberRenders != item.index){
+            this.state.difDateMessages = []
+            this.state.numberRenders = 0
+        }   
+
         var dif = null     
 
         if(this.state.numberRenders <= this.state.memoriesSize){
             
-            dif = compareDates(date)
+            dif = compareDates(item.date)
             var difDateMessages = this.state.difDateMessages
 
             if(difDateMessages.indexOf(dif) == -1){    
@@ -229,7 +234,7 @@ class List extends Component {
 
         this.state.numberRenders++ 
 
-        // Fix para el bug del multiple render de la flatlist
+        // Fix para el bug del multiple render de la flatlist (cuando el render se ha completado)
         this.state.memoriesSize = Object.keys(this.props.memories.memories).length        
         if(this.state.numberRenders >= this.state.memoriesSize){
             this.state.difDateMessages = []
@@ -243,7 +248,7 @@ class List extends Component {
         
         const {navigate} = this.props.navigation  
        
-        difDates = this.getDifDates(item.date)
+        difDates = this.getDifDates(item)
 
         var marginTopIcons = 10
 
@@ -275,8 +280,9 @@ class List extends Component {
                     </View>
 
                     <View style={[styles.memoryIconsContainer, {marginTop: marginTopIcons}]}>
-                        <TouchableWithoutFeedback 
+                        <TouchableOpacity 
                             onPress={() => this.onShare(item.text)}
+                            activeOpacity = {0.9}
                         >
                             <Icon 
                                 name="share-alt-square"
@@ -284,10 +290,11 @@ class List extends Component {
                                 size = {25}
                                 style={styles.memoryIcon}
                             />
-                        </TouchableWithoutFeedback>
+                        </TouchableOpacity>
 
-                        <TouchableWithoutFeedback 
+                        <TouchableOpacity 
                             onPress={() => this.copyToClipboard(item.text)}
+                            activeOpacity = {0.9}
                         >
                             <Icon 
                                 name="copy"
@@ -295,10 +302,11 @@ class List extends Component {
                                 size = {25}
                                 style={styles.memoryIcon}
                             />
-                        </TouchableWithoutFeedback>
+                        </TouchableOpacity>
                         
-                        <TouchableWithoutFeedback                         
+                        <TouchableOpacity                         
                             onPress={() => this.showDeleteModal(item.key,item.title,item.text)}
+                            activeOpacity = {0.9}
                         >
                             <Icon 
                                 name="edit"
@@ -306,7 +314,7 @@ class List extends Component {
                                 size = {25}
                                 style={styles.memoryIcon}
                             />
-                        </TouchableWithoutFeedback>
+                        </TouchableOpacity>
                     </View>         
 
                 </View>                  
@@ -324,20 +332,20 @@ class List extends Component {
                 {/* Botones New y Copy From Clipboard */}
 
                 <View style={styles.buttonsContainer}> 
-                    <TouchableWithoutFeedback 
+                    <TouchableOpacity 
                         onPress={() => this.newMemory()}
-                    >
-                        <View style={styles.newMemoryButton}>                            
-                            <Icon 
-                                name="plus"
-                                color = "white"
-                                size = {25}
-                                style={styles.plusIcon}
-                            />
-                        </View>                
-                    </TouchableWithoutFeedback>
-                    <TouchableWithoutFeedback 
+                        style={styles.newMemoryButton}
+                        activeOpacity = {0.9}
+                    >                         
+                        <Icon 
+                            name="plus"
+                            color = "white"
+                            size = {25}
+                        />           
+                    </TouchableOpacity>
+                    <TouchableOpacity 
                         onPress={() => this.newMemoryFromClipboard()}
+                        activeOpacity = {0.9}
                     >
                         <View style={styles.copyMemoryFromClipboardButton}>
                             <Text style={styles.copyMemoryFromClipboardButtonText}>Get memory from clipboard</Text>
@@ -348,7 +356,7 @@ class List extends Component {
                                 style={styles.pasteIcon}
                             />
                         </View>                
-                    </TouchableWithoutFeedback>
+                    </TouchableOpacity>
                 </View>
 
                 {/* Lista de Recuerdos */}
@@ -369,8 +377,9 @@ class List extends Component {
                     :
                     <View style={styles.noMemoriesContainer}> 
                         <Text style={styles.noMemoriesText}>You can add a memory easily with the clipboard, or the "Share Tool", selecting any text in your device and pressing Share with Memories Cloud.</Text>
-                        <TouchableWithoutFeedback 
+                        <TouchableOpacity 
                             onPress={() => this.props.navigation.navigate("Help")}
+                            activeOpacity = {0.9}
                         >
                             <View style={styles.noMemoriesButton}>
                                 <Text style={styles.noMemoriesTextButton}>Yet lost? Get Help!</Text>
@@ -381,7 +390,7 @@ class List extends Component {
                                     style={styles.noMemoriesIcon}
                                 />
                             </View>                
-                        </TouchableWithoutFeedback>
+                        </TouchableOpacity>
                     </View>
                 }       
 
@@ -400,7 +409,7 @@ class List extends Component {
                     hideModalContentWhileAnimating = {true}
                     backdropOpacity = {0.40}
                 >
-                    <View style={styles.modalBox}>
+                    <View style={[styles.modalBox, {width: this.state.width - 60}]}>
                         
                         <Text style={styles.modalTitle}>Edit Memory</Text>
 
@@ -428,21 +437,23 @@ class List extends Component {
                             maxLength = {MAX_MEMORY_LENGTH}
                         />     
 
-                        <TouchableHighlight
+                        <TouchableOpacity
                             onPress={() => this.saveMemory()}
                             style={styles.backButton}
                             underlayColor = '#fec600'
+                            activeOpacity = {0.9}
                         >                                       
                             <Text style={styles.textBackButton}>Save changes</Text>
-                        </TouchableHighlight> 
+                        </TouchableOpacity> 
 
-                        <TouchableHighlight
+                        <TouchableOpacity
                             onPress={() => this.deleteMemory()}
                             style={styles.deleteButton}
                             underlayColor = 'red'
+                            activeOpacity = {0.9}
                         >                                       
                             <Text style={styles.textDeleteButton}>Delete Memory</Text>
-                        </TouchableHighlight>                          
+                        </TouchableOpacity>                          
 
                     </View>
                 </Modal>      
@@ -510,16 +521,15 @@ const styles = StyleSheet.create({
     buttonsContainer: {        
         flexDirection: 'row',
         justifyContent: 'center',
-        marginTop: 15,
-        alignItems: 'center',
+        marginTop: 15
     },
     newMemoryButton: {        
         backgroundColor: '#32A54A',
-        marginBottom: 10,
-        marginRight: 10,
-        paddingHorizontal: 7,
-        paddingVertical: 3,
-        borderRadius: 200
+        alignItems:'center',
+        justifyContent:'center',
+        width:45,
+        height:45,
+        borderRadius:100,
     },
     copyMemoryFromClipboardButton: {
         flexDirection: 'row',
@@ -528,19 +538,13 @@ const styles = StyleSheet.create({
         marginBottom: 10,
         paddingHorizontal: 5,
         paddingVertical: 5,
-        borderRadius: 10
+        borderRadius: 7
     },
     copyMemoryFromClipboardButtonText:{
         fontSize: 15,
         color: '#0088ff',
         fontWeight: 'bold',
         marginTop: 8
-    },
-    plusIcon: {
-        marginTop: 6,
-        marginBottom: 5,
-        marginRight: 5,
-        marginLeft: 5
     },
     pasteIcon: {
         marginTop: 6,
@@ -611,8 +615,8 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     modalBox: {        
-        backgroundColor: 'white',
-        width: width - 60,
+        backgroundColor: 'white',        
+        height: 310,
         borderRadius: 5,
         paddingVertical: 10,
         paddingHorizontal: 10
@@ -681,7 +685,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10,
         paddingVertical: 1
     }
-  });
+})
   
 //mapStateToProps
 const mapStateToProps = state => {

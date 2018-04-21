@@ -29,10 +29,10 @@ const Routes = {
           })
     },
     SendPassword: {
-		screen: SendPassword,
-		navigationOptions: ({navigation}) => ({
-			header: false
-		})
+        screen: SendPassword,
+        navigationOptions: ({navigation}) => ({
+          header: false
+        })
     },
     Home: {
         screen: App, 
@@ -40,35 +40,35 @@ const Routes = {
             header: false
           })
     },
-	Profile: {
-		screen: Profile,
-		navigationOptions: ({navigation}) => ({
-			header: false
-		})
+	  Profile: {
+        screen: Profile,
+        navigationOptions: ({navigation}) => ({
+          header: false
+        })
     },
     NewMemory: {
-		screen: NewMemory,
-		navigationOptions: ({navigation}) => ({
-			header: false
-		})
+        screen: NewMemory,
+        navigationOptions: ({navigation}) => ({
+          header: false
+        })
     },
     Share: {
-		screen: Share,
-		navigationOptions: ({navigation}) => ({
-			header: false
-		})
+        screen: Share,
+        navigationOptions: ({navigation}) => ({
+          header: false
+        })
     },
     Help: {
-		screen: Help,
-		navigationOptions: ({navigation}) => ({
-			header: false
-		})
+        screen: Help,
+        navigationOptions: ({navigation}) => ({
+          header: false
+        })
     },
     Support: {
-		screen: Support,
-		navigationOptions: ({navigation}) => ({
-			header: false
-		})
+        screen: Support,
+        navigationOptions: ({navigation}) => ({
+          header: false
+        })
     }
 }
 

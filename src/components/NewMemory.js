@@ -4,7 +4,7 @@ import {
     View,
     StyleSheet,
     TextInput,
-    TouchableHighlight,
+    TouchableOpacity,
     Dimensions,
     ScrollView,
     Clipboard,
@@ -154,22 +154,22 @@ class NewMemory extends Component {
                     maxLength = {MAX_MEMORY_LENGTH}
                 />   
 
-                <TouchableHighlight
+                <TouchableOpacity
                     onPress={() => this.save()}
                     style={styles.saveButton}
-                    underlayColor = '#fec600'
+                    activeOpacity = {0.9}
                     disabled = {this.state.saveDisabled}
                 >                                       
                     <Text style={styles.textSaveButton}>Save</Text>
-                </TouchableHighlight>  
+                </TouchableOpacity>  
 
-                <TouchableHighlight
+                <TouchableOpacity
                     onPress={() => this.props.navigation.goBack()}
                     style={styles.backButton}
-                    underlayColor = 'red'
+                    activeOpacity = {0.9}
                 >                                       
                     <Text style={styles.textBackButton}>Discard</Text>
-                </TouchableHighlight>             
+                </TouchableOpacity>             
 
                 <DropdownAlert 
                     ref={ref => this.dropdown = ref} 

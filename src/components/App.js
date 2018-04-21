@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component } from 'react'
 import {
     Platform,
     StyleSheet,
@@ -7,7 +7,7 @@ import {
     BackHandler,
     ActivityIndicator,
     Dimensions
-} from 'react-native';
+} from 'react-native'
 
 import SlideMenu from 'react-native-side-menu'
 import {connect} from 'react-redux'
@@ -54,7 +54,7 @@ class App extends Component{
     
         const { nav } = this.props
         const { routes, index } = nav
-        const currentRoute = routes[index];
+        const currentRoute = routes[index]
 
         if(currentRoute.routeName != "Home"){
             this.props.navigation.pop()
@@ -114,7 +114,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center'
     }
-});
+})
 
 //mapStateToProps
 const mapStateToProps = state => {

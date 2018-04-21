@@ -1,4 +1,4 @@
-import {FETCHING_USER, FETCHING_USER_SUCCESS, FETCHING_USER_ERROR} from '../constants';
+import {FETCHING_USER, FETCHING_USER_SUCCESS, FETCHING_USER_ERROR} from '../constants'
 
 const initialState = {
     user: '',

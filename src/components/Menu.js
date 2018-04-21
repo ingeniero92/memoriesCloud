@@ -6,8 +6,7 @@ import {
     Text,
     Image,
     ScrollView,
-    TouchableWithoutFeedback,
-    TouchableHighlight,
+    TouchableOpacity,
     ActivityIndicator
 } from 'react-native'
 
@@ -66,26 +65,28 @@ class Menu extends Component {
 
                 <View style={[styles.userContainer, {width: (this.props.menuWidth)}]}>
                     <View style={styles.settingsContainer}>
-                        <TouchableWithoutFeedback 
+                        <TouchableOpacity 
                             onPress={() => navigate('Profile')}
+                            activeOpacity = {0.9}
                         >
                             <Icon 
                                 name="cog"
                                 color = "white"
                                 size = {20}
                             />
-                        </TouchableWithoutFeedback>
-                        <TouchableWithoutFeedback 
+                        </TouchableOpacity>
+                        <TouchableOpacity 
                             onPress={() => navigate('Profile')}
+                            activeOpacity = {0.9}
                         >                    
                             <View>
                                 <Text style = {styles.settingsText}>   User Settings</Text>
                             </View>                
                                                                     
-                        </TouchableWithoutFeedback>
+                        </TouchableOpacity>
                     </View>
                     
-                    <TouchableWithoutFeedback 
+                    <TouchableOpacity 
                         onPress = {this.logout.bind(this)}
                     >
                         <Icon 
@@ -93,13 +94,13 @@ class Menu extends Component {
                             color = "white"
                             size = {20}
                         />
-                    </TouchableWithoutFeedback>
+                    </TouchableOpacity>
                 </View>
 
                 <ScrollView style={[styles.scrollContainer, {width: (this.props.menuWidth) }]}>
-                    <TouchableHighlight 
+                    <TouchableOpacity 
                         onPress={() => navigate('Help')}
-                        underlayColor = '#0088ff'
+                        activeOpacity = {0.9}
                     >
                         <View style={styles.textWithIcon}>
                             <View style={styles.withIcon}>
@@ -118,10 +119,10 @@ class Menu extends Component {
                                 size={25}
                             />
                         </View>
-                    </TouchableHighlight>
-                    <TouchableHighlight 
+                    </TouchableOpacity>
+                    <TouchableOpacity 
                         onPress={() => navigate('Support')}
-                        underlayColor = '#0088ff'
+                        activeOpacity = {0.9}
                     >
                         <View style={styles.textWithIcon}>
                             <View style={styles.withIcon}>
@@ -140,7 +141,7 @@ class Menu extends Component {
                                 size={25}
                             />
                         </View>
-                    </TouchableHighlight>
+                    </TouchableOpacity>
                 </ScrollView>
 
             </View>

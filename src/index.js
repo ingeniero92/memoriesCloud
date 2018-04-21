@@ -10,34 +10,34 @@ import {
     applyMiddleware,
     combineReducers,
     compose
-  } from 'redux';
+} from 'redux'
 
 import { 
     Provider, 
     connect 
 } from 'react-redux'
 
-import thunk from 'redux-thunk';
+import thunk from 'redux-thunk'
 
 import {
     createReduxBoundAddListener,
     createReactNavigationReduxMiddleware,
-  } from 'react-navigation-redux-helpers';
+} from 'react-navigation-redux-helpers'
 
 import BugFreeStackNavigator from './lib/BugFreeStackNavigator'
 import Routes from './config/routes'
 import getRootReducer from './reducers'
 
-import { YellowBox } from 'react-native';
-import _ from 'lodash';
-YellowBox.ignoreWarnings(['Setting a timer']);
-YellowBox.ignoreWarnings(['FIREBASE WARNING']);
-const _console = _.clone(console);
+import { YellowBox } from 'react-native'
+import _ from 'lodash'
+YellowBox.ignoreWarnings(['Setting a timer'])
+YellowBox.ignoreWarnings(['FIREBASE WARNING'])
+const _console = _.clone(console)
 console.warn = message => {
     if (message.indexOf('Setting a timer') <= -1) {
-        _console.warn(message);
+        _console.warn(message)
     }
-};
+}
 
 const Navigator = BugFreeStackNavigator(Routes, {
     headerMode: 'screen',
@@ -52,14 +52,14 @@ const navReducer = (state, action) => {
 const middleware = createReactNavigationReduxMiddleware(
     "root",
     state => state.nav,
-  );
+)
 
-const addListener = createReduxBoundAddListener("root");
+const addListener = createReduxBoundAddListener("root")
 
 const store = createStore(
     getRootReducer(navReducer),
     applyMiddleware(thunk),
-);
+)
 
 class App extends Component {
     render(){
@@ -77,7 +77,7 @@ class App extends Component {
 
 const mapStateToProps = (state) => ({
     nav: state.nav
- });
+})
 
 const AppIndex = connect(mapStateToProps)(App)
 

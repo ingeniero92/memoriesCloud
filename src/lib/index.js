@@ -71,6 +71,15 @@ function convertDateToMilliseconds(date){
 
 }
 
+function indexMemories(sortedMemories){
+
+    for(i = 0; i < sortedMemories.length; ++i){
+        sortedMemories[i].index = i
+    }
+
+    return sortedMemories
+}
+
 function compareMemories(a,b){
 
     const dateA = Number(a.date)
@@ -87,8 +96,8 @@ function compareMemories(a,b){
 }
 
 export const getArrayFromObject = (object) => {
-    const objectArray = Object.keys(object).map(key => 
-        item = {key: key, date: object[key].date, text: object[key].text, title: object[key].title}
+    const objectArray = Object.keys(object).map((key,index) => 
+        item = {key: key, date: object[key].date, text: object[key].text, title: object[key].title, index: index}
     )
     return objectArray
 }
@@ -98,7 +107,8 @@ export const getSortedMemoriesFromObject = (object) => {
     if(object){
         var memoriesObject = getArrayFromObject(object)
         var sortedMemories = memoriesObject.sort(compareMemories)
-        return memoriesObject
+        var sortedIndexedMemories = indexMemories(sortedMemories)
+        return sortedIndexedMemories
     } else {
         return object
     }   

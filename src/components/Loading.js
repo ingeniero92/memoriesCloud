@@ -7,7 +7,7 @@ import {
     Image,
     ActivityIndicator,
     Dimensions,
-    TouchableHighlight,
+    TouchableOpacity,
     BackHandler,
     NetInfo
 } from 'react-native'
@@ -126,13 +126,13 @@ class Loading extends Component {
 
                         <Text style={styles.modalText}>Sorry, but you need to update Memories Cloud. Please, check in your store the new version.</Text>
 
-                        <TouchableHighlight
+                        <TouchableOpacity
                             onPress={() => this.exitApp()}
                             style={styles.exitButton}
-                            underlayColor = 'red'
+                            activeOpacity = {0.9}
                         >                                       
                             <Text style={styles.textExitButton}>Exit</Text>
-                        </TouchableHighlight> 
+                        </TouchableOpacity> 
 
                     </View>
                 </Modal>   
@@ -153,13 +153,13 @@ class Loading extends Component {
 
                         <Text style={styles.modalText}>Sorry, but you need data connection to use Memories Cloud. Please, check your connection.</Text>
 
-                        <TouchableHighlight
+                        <TouchableOpacity
                             onPress={() => this.exitApp()}
                             style={styles.exitButton}
-                            underlayColor = 'red'
+                            activeOpacity = {0.9}
                         >                                       
                             <Text style={styles.textExitButton}>Exit</Text>
-                        </TouchableHighlight> 
+                        </TouchableOpacity> 
 
                     </View>
                 </Modal>   

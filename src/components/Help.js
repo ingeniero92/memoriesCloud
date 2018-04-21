@@ -4,7 +4,7 @@ import {
     View,
     StyleSheet,
     TextInput,
-    TouchableHighlight,
+    TouchableOpacity,
     Keyboard,
     ScrollView,
     Image,
@@ -45,13 +45,13 @@ class Help extends Component {
                     </ScrollView>
                 </View>                                         
 
-                <TouchableHighlight
+                <TouchableOpacity
                     onPress={ () => goBack()}
                     style={styles.cancelButton}
-                    underlayColor = 'red'
+                    activeOpacity = {0.9}
                 >                                       
                     <Text style={styles.textCancelButton}>Back to Home</Text>
-                </TouchableHighlight>                 
+                </TouchableOpacity>                 
 
             </View>
         )

@@ -4,7 +4,7 @@ import {
     View,
     StyleSheet,
     TextInput,
-    TouchableHighlight,
+    TouchableOpacity,
     Dimensions,
     ScrollView,
     Clipboard,
@@ -54,7 +54,7 @@ class NewMemory extends Component {
 
     componentWillUnmount() {
         if (this.unsubscriber) {
-            this.unsubscriber();
+            this.unsubscriber()
         }
     }    
 
@@ -158,7 +158,7 @@ class NewMemory extends Component {
 
     signUp(){
         ShareExtension.close()
-        Linking.openURL('com.memoriescloud://').catch(error => console.error(error));
+        Linking.openURL('com.memoriescloud://').catch(error => console.error(error))
     }
 
     render(){     
@@ -196,22 +196,22 @@ class NewMemory extends Component {
                         maxLength = {MAX_MEMORY_LENGTH}
                     />
 
-                    <TouchableHighlight
+                    <TouchableOpacity
                         onPress={() => this.save()}
                         style={styles.saveButton}
-                        underlayColor = '#fec600'
+                        activeOpacity = {0.9}
                         disabled = {this.state.saveDisabled}
                     >                                       
                         <Text style={styles.textSaveButton}>Save</Text>
-                    </TouchableHighlight>  
+                    </TouchableOpacity>  
 
-                    <TouchableHighlight
+                    <TouchableOpacity
                         onPress={() => ShareExtension.close()}
                         style={styles.backButton}
-                        underlayColor = 'red'
+                        activeOpacity = {0.9}
                     >                                       
                         <Text style={styles.textBackButton}>Discard</Text>
-                    </TouchableHighlight>    
+                    </TouchableOpacity>    
 
                 </View>   
 
@@ -225,21 +225,21 @@ class NewMemory extends Component {
                     </View>    
 
                     <View style={styles.buttonContainer}>
-                        <TouchableHighlight
+                        <TouchableOpacity
                             onPress = {() => this.signUp()}
                             style={styles.registerButton}
-                            underlayColor = '#32A54A'
+                            activeOpacity = {0.9}
                         > 
                             <Text style={styles.textRegisterButton}>Register free account!</Text>
-                        </TouchableHighlight>     
+                        </TouchableOpacity>     
                         
-                        <TouchableHighlight
+                        <TouchableOpacity
                             onPress={ () => ShareExtension.close()}
                             style={styles.backButton}
-                            underlayColor = 'red'
+                            activeOpacity = {0.9}
                         >                                       
                             <Text style={styles.textBackButton}>Exit</Text>
-                        </TouchableHighlight>                   
+                        </TouchableOpacity>                   
                     </View>                          
 
                 </View>  
