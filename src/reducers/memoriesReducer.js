@@ -12,9 +12,9 @@ export default memoriesReducer = (state = initialState, action) => {
         case FETCHING_MEMORIES:
             return {
                 ...state,
-                memories: [],
-                error: false,
+                memories: [],                
                 isFetching: true,
+                error: false,
                 success: false
             }
         case FETCHING_MEMORIES_SUCCESS: 

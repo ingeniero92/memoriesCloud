@@ -12,9 +12,9 @@ export default userReducer = (state = initialState, action) => {
         case FETCHING_USER:
             return {
                 ...state,
-                user: '',
-                error: false,
+                user: '',                
                 isFetching: true,
+                error: false,
                 success: false
             }
         case FETCHING_USER_SUCCESS: 

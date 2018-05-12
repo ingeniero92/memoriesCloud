@@ -123,7 +123,7 @@ class Register extends Component {
                     <TouchableOpacity
                         onPress = {this.signUp}
                         style={styles.registerButton}
-                        activeOpacity = {0.9}
+                        activeOpacity = {0.95}
                     > 
                         <Text style={styles.textRegisterButton}>Register account!</Text>
                     </TouchableOpacity>

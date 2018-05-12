@@ -22,7 +22,7 @@ import DropdownAlert from 'react-native-dropdownalert'
 import FirebaseHelpers from '../api/firebaseHelpers'
 import {getCurrentDate} from '../lib' 
 
-import {MAX_MEMORY_LENGTH, MAX_TITLE_LENGTH} from '../constants'
+import {MAX_MEMORY_LENGTH, MAX_TITLE_LENGTH} from '../config'
 
 const {width, height} = Dimensions.get('window')
 
@@ -199,7 +199,7 @@ class NewMemory extends Component {
                     <TouchableOpacity
                         onPress={() => this.save()}
                         style={styles.saveButton}
-                        activeOpacity = {0.9}
+                        activeOpacity = {0.95}
                         disabled = {this.state.saveDisabled}
                     >                                       
                         <Text style={styles.textSaveButton}>Save</Text>

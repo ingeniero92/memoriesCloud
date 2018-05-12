@@ -15,7 +15,8 @@ import{
     ActivityIndicator,
     AppState,
     TouchableNativeFeedback,
-    NetInfo
+    NetInfo,
+    Linking
 } from 'react-native'
 
 import Modal from "react-native-modal"
@@ -31,7 +32,7 @@ import FirebaseHelpers from '../api/firebaseHelpers'
 import { fetchMemories } from '../actions/memoriesActions'
 import { fetchUser } from '../actions/userActions'
 
-import {MAX_MEMORY_LENGTH, MAX_TITLE_LENGTH} from '../constants'
+import {MAX_MEMORY_LENGTH, MAX_TITLE_LENGTH} from '../config'
 
 const {width, height} = Dimensions.get('window')
 
@@ -132,6 +133,20 @@ class List extends Component {
                 'com.apple.UIKit.activity.PostToTwitter'
             ]
         })
+    }
+
+    // Metodos para realizar una busqueda por internet
+
+    searchMemory(url){
+
+        Linking.canOpenURL(url).then(supported => {
+            if (!supported) {
+                return Linking.openURL( 'https://www.google.com/search?q=' + url);
+            } else {
+                return Linking.openURL(url);
+            }
+        }).catch(err => console.error('An error occurred', err));
+
     }
 
     // Metodos para crear recuerdos
@@ -270,7 +285,21 @@ class List extends Component {
 
                 <View style={[styles.memoryContainer, { width: this.state.width}]}>                                 
 
-                    <View style={[styles.memoryTextContainer, { width: this.state.width - (30*3 + 55) }]}>
+                    <View style={[styles.memorySearchIconContainer, {marginTop: marginTopIcons}]}>
+                        <TouchableOpacity 
+                            onPress={() => this.searchMemory(item.text)}
+                            activeOpacity = {0.9}
+                        >
+                            <Icon 
+                                name="globe"
+                                color = "white"
+                                size = {25}
+                                style={styles.searchIcon}
+                            />
+                        </TouchableOpacity>
+                    </View>
+
+                    <View style={[styles.memoryTextContainer, { width: this.state.width - (30*3 + 63) }]}>
                         {item.title && 
                             <TextInput editable = {false} style={styles.memoryTitle}>{item.title}</TextInput>
                         }                        
@@ -345,7 +374,7 @@ class List extends Component {
                     </TouchableOpacity>
                     <TouchableOpacity 
                         onPress={() => this.newMemoryFromClipboard()}
-                        activeOpacity = {0.9}
+                        activeOpacity = {0.95}
                     >
                         <View style={styles.copyMemoryFromClipboardButton}>
                             <Text style={styles.copyMemoryFromClipboardButtonText}>Get memory from clipboard</Text>
@@ -440,7 +469,6 @@ class List extends Component {
                         <TouchableOpacity
                             onPress={() => this.saveMemory()}
                             style={styles.backButton}
-                            underlayColor = '#fec600'
                             activeOpacity = {0.9}
                         >                                       
                             <Text style={styles.textBackButton}>Save changes</Text>
@@ -449,7 +477,6 @@ class List extends Component {
                         <TouchableOpacity
                             onPress={() => this.deleteMemory()}
                             style={styles.deleteButton}
-                            underlayColor = 'red'
                             activeOpacity = {0.9}
                         >                                       
                             <Text style={styles.textDeleteButton}>Delete Memory</Text>
@@ -553,7 +580,7 @@ const styles = StyleSheet.create({
         marginLeft: 5
     },
     memoriesContainer: {
-        paddingHorizontal: 20
+        paddingHorizontal: 5
     },
     memoryContainer: {
         flex: 1,        
@@ -570,6 +597,14 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'center',
         width: 30*3 + 25
+    },
+    memorySearchIconContainer:{
+        flexDirection: 'row',
+        justifyContent: 'center',
+        width: 35
+    },
+    searchIcon: {
+        marginRight: 5
     },
     memoryTitle: {
         color: '#0088ff',
@@ -615,11 +650,13 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     modalBox: {        
-        backgroundColor: 'white',        
-        height: 310,
+        backgroundColor: 'white', 
         borderRadius: 5,
         paddingVertical: 10,
-        paddingHorizontal: 10
+        paddingHorizontal: 10,
+        height: 310,
+        maxWidth: 500,
+        maxHeight: 310
     },
     modalContainer: {
         alignItems: 'center'

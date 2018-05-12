@@ -19,7 +19,7 @@ import DropdownAlert from 'react-native-dropdownalert'
 import FirebaseHelpers from '../api/firebaseHelpers'
 import firebase from '../api/firebase'
 
-import {CURRENT_VERSION} from '../constants'
+import {CURRENT_VERSION} from '../config'
 
 const {width, height} = Dimensions.get('window')
 

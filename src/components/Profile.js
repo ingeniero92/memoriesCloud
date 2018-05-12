@@ -86,7 +86,7 @@ class Profile extends Component {
                 <TouchableOpacity
                     style={styles.saveButton}
                     onPress = {this.saveForm.bind(this)}
-                    activeOpacity = {0.9}
+                    activeOpacity = {0.95}
                 > 
                     <Text style={styles.textSaveButton}>Save</Text>
                 </TouchableOpacity>

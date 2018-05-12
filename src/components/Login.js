@@ -145,7 +145,7 @@ class Login extends Component {
                     <TouchableOpacity
                         onPress = {() => this.login()}
                         style={styles.loginButton}
-                        activeOpacity = {0.9}
+                        activeOpacity = {0.95}
                     > 
                         <Text style={styles.textLoginButton}>Login</Text>
                     </TouchableOpacity>

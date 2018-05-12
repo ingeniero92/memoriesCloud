@@ -82,7 +82,7 @@ class SendPassword extends Component {
                     <TouchableOpacity
                         onPress = { () => this.sendPassword()}
                         style={styles.sendPasswordButton}
-                        activeOpacity = {0.9}
+                        activeOpacity = {0.95}
                     > 
                         <Text style={styles.textSendButton}>Send reset password</Text>
                     </TouchableOpacity>

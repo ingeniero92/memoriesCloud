@@ -40,7 +40,7 @@ const Routes = {
             header: false
           })
     },
-	  Profile: {
+	Profile: {
         screen: Profile,
         navigationOptions: ({navigation}) => ({
           header: false

@@ -2,11 +2,20 @@ import * as firebase from 'firebase'
 
 class FirebaseHelpers {
 
-    // Setters
-    static setUserName(userId, name){
-        let userNamePath = "/user/" + userId + "/details/name"
-        return firebase.database().ref(userNamePath).set(name)
+    // Getters Memories
+
+    static getMemories(userId){
+
+        let userMemoriesPath = "/user/" + userId + "/memories"
+        var ref = firebase.database().ref(userMemoriesPath)
+
+        return ref.once("value", (snapshot) => {
+            let memories = snapshot.val()
+        }).then(response => Promise.all([response.val()])) // response, response.json()
+
     }
+
+    // Setters Memories
     
     static setMemory(userId, memory){
         let userNamePath = "/user/" + userId + "/memories"
@@ -27,6 +36,13 @@ class FirebaseHelpers {
         ref.remove()
     }
 
+    // Setters User
+
+        static setUserName(userId, name){
+            let userNamePath = "/user/" + userId + "/details/name"
+            return firebase.database().ref(userNamePath).set(name)
+        }
+
     // Getters User
 
     static getActualUser(){
@@ -42,19 +58,6 @@ class FirebaseHelpers {
             }
             callback(name)
         })
-    }
-
-    // Getter Memories
-    
-    static getMemories(userId){
-
-        let userMemoriesPath = "/user/" + userId + "/memories"
-        var ref = firebase.database().ref(userMemoriesPath)
-
-        return ref.once("value", (snapshot) => {
-            let memories = snapshot.val()
-        }).then(response => Promise.all([response.val()]))
-
     }
 
     // Getters App
