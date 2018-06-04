@@ -20,10 +20,27 @@ const {width, height} = Dimensions.get('window')
 
 class Help extends Component {
 
+    constructor(props){
+        super(props)
+        this.state = {
+            width,
+            height
+        }
+    }
+
+    // Metodo para actualizar las dimensiones actuales del dispositivo (debido a los posibles giros de pantalla)
+
+    _handleLayout = event => {
+        this.setState({
+            width: Dimensions.get('window').width,
+            height: Dimensions.get('window').height
+        })
+    }
+
     render(){
         const {goBack} = this.props.navigation
         return (
-            <View style={styles.container}>
+            <View style={styles.container} onLayout={this._handleLayout}>
 
                 <Text style={styles.titleText}>Help</Text> 
 
@@ -33,14 +50,14 @@ class Help extends Component {
                         <View style={styles.scrollHelp}>
                             <Text style={styles.text}>Lost? Dont worry! You can easily add memories to this app with the next steps.</Text>
                             <Text style={styles.text}>First, you can select a URL pressing it from any web browser like this image:</Text>
-                            <Image style={styles.image} source={require('../images/share1.png')}/>
+                            <Image style={[styles.image,{width: this.state.width - 50, height:((this.state.width - 50)*0.58)}]} source={require('../images/share1.png')}/>
                             <Text style={styles.text}>Or any text in a web like that:</Text>
-                            <Image style={styles.image} source={require('../images/share2.png')}/>
+                            <Image style={[styles.image,{width: this.state.width - 50, height:((this.state.width - 50)*0.58)}]} source={require('../images/share2.png')}/>
                             <Text style={styles.text}>Then, press "Share" to show your compatible apps...</Text>
-                            <Image style={styles.image} source={require('../images/share3.png')}/>
+                            <Image style={[styles.image,{width: this.state.width - 50, height:((this.state.width - 50)*0.58)}]} source={require('../images/share3.png')}/>
                             <Text style={styles.text}>...and voalá! Press in Memories Cloud and save your memory.</Text>
                             <Text style={styles.text}>Also, you can create a new memory or copy any text in another app and paste it in Memories Cloud like this image.</Text>
-                            <Image style={styles.image} source={require('../images/share4.png')}/>
+                            <Image style={[styles.image,{width: this.state.width - 50, height:((this.state.width - 50)*0.58)}]} source={require('../images/share4.png')}/>
                         </View>
                     </ScrollView>
                 </View>                                         

@@ -301,10 +301,24 @@ class List extends Component {
 
                     <View style={[styles.memoryTextContainer, { width: this.state.width - (30*3 + 63) }]}>
                         {item.title && 
-                            <TextInput editable = {false} style={styles.memoryTitle}>{item.title}</TextInput>
+                            <TextInput 
+                                editable = {false} 
+                                style={styles.memoryTitle} 
+                                underlineColorAndroid='transparent'
+                                placeholderTextColor="white"
+                                placeholder = "Title"
+                                value={item.title}
+                            />
                         }                        
                         <ScrollView style={styles.memoryTextScrollView} horizontal>     
-                            <TextInput editable = {false} style={styles.memoryText}>{item.text}</TextInput>
+                            <TextInput 
+                                editable = {false} 
+                                style={styles.memoryText}
+                                underlineColorAndroid='transparent'
+                                placeholderTextColor="white"
+                                placeholder = "Memory"
+                                value = {item.text} 
+                            />
                         </ScrollView>            
                     </View>
 

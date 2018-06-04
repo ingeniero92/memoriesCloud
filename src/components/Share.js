@@ -58,7 +58,7 @@ class NewMemory extends Component {
         }
     }    
 
-    componentWillMount() {
+    componentDidMount() {
         
         try{
             this.unsubscriber = firebase.auth().onAuthStateChanged((user) => {
