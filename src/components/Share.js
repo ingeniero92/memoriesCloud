@@ -189,7 +189,7 @@ class NewMemory extends Component {
                         selectionColor="#449DEF"
                         underlineColorAndroid='transparent'
                         placeholderTextColor="grey"
-                        placeholder = "Memory"
+                        placeholder = "Loading memory..."
                         style={[styles.memoryTextContainer, { width: this.state.width - 20}]}
                         value = {this.state.value}
                         onChangeText = {(value) => this.setState({value})}
